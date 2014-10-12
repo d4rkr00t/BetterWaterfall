@@ -1,0 +1,182 @@
+.w-graph__cont {
+    background: #1A1A1A;
+    font-family: Helvetica Neue, Helveica, Arial, sans-serif;
+    }
+
+.w-graph { }
+
+/**
+ * Entry
+ */
+
+.w-graph.-hover .w-graph__entry .w-graph__entry-main {
+    opacity: .3;
+    }
+
+.w-graph.-hover .w-graph__entry .w-graph__entry-main.-hover {
+    opacity: 0;
+    }
+
+.w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub,
+.w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub-info {
+    display: block;
+    opacity: 1;
+    }
+
+.w-graph__entry .w-graph__entry-main {
+    fill: RGBA(247, 252, 253, .3);
+    transition: opacity .2s;
+    }
+
+    .w-graph__entry.-document .w-graph__entry-main {
+        fill: RGBA(65, 182, 196, .65);
+        }
+
+    .w-graph__entry.-image .w-graph__entry-main {
+        fill: RGBA(129, 15, 124, .65);
+        }
+
+    .w-graph__entry.-stylesheet .w-graph__entry-main {
+        fill: RGBA(127, 188, 65, .65);
+        }
+
+    .w-graph__entry.-script .w-graph__entry-main {
+        fill: RGBA(254, 178, 76, .65);
+        }
+
+    .w-graph__entry.-fonts .w-graph__entry-main {
+        fill: RGBA(227, 26, 28, .6);
+        }
+
+.w-graph__entry-sub {
+    opacity: 0;
+    transition: opacity .3s;
+    }
+
+    .w-graph__entry-sub .-blocked {
+        fill: RGBA(130, 130, 130, .8);
+        }
+
+    .w-graph__entry-sub .-dns {
+        fill: RGBA(254, 178, 76, .8);
+        }
+
+    .w-graph__entry-sub .-send {
+        fill: RGBA(117, 112, 179, .8);
+        }
+
+    .w-graph__entry-sub .-connect {
+        fill: RGBA(231, 41, 138, .8);
+        }
+
+    .w-graph__entry-sub .-wait {
+        fill: RGBA(102, 166, 30, .8);
+        }
+
+    .w-graph__entry-sub .-receive {
+        fill: RGBA(33, 102, 172, .8);
+        }
+
+    .w-graph__entry-sub .-ssl {
+        fill: RGBA(230, 171, 2, .8);
+        }
+
+.w-graph__entry-sub-info {
+    display: none;
+    }
+
+    .w-graph__entry-sub-info__line {
+        stroke: RGBA(255, 255, 255, .3);
+        }
+
+    .w-graph__entry-sub-info__text {
+        fill: RGBA(255, 255, 51, .6);
+        letter-spacing: 0.04em;
+        font-size: 12px;
+        font-weight: 200;
+        }
+
+        .w-graph__entry-sub-info__text.-name,
+        .w-graph__entry-sub-info__text.-host {
+            fill: RGBA(255, 255, 255, .6);
+            }
+
+        .w-graph__entry-sub-info__text.-host.-diff {
+            fill: RGBA(227, 26, 28, .8);
+            }
+
+        .w-graph__entry-sub-info__text.-total {
+            fill: RGBA(65, 182, 196, .9);
+            }
+
+        .w-graph__entry-sub-info__text.-document {
+            fill: RGBA(65, 182, 196, .9);
+            }
+
+        .w-graph__entry-sub-info__text.-image {
+            fill: RGBA(201, 148, 199, .9);
+            }
+
+        .w-graph__entry-sub-info__text.-stylesheet {
+            fill: RGBA(127, 188, 65, .9);
+            }
+
+        .w-graph__entry-sub-info__text.-script {
+            fill: RGBA(254, 178, 76, .9);
+            }
+
+        .w-graph__entry-sub-info__text.-fonts {
+            fill: RGBA(227, 26, 28, .8);
+            }
+
+/**
+ * Axis
+ */
+
+.w-graph.-hover .w-graph__x-axis-tick,
+.w-graph.-hover .w-graph__x-axis-text {
+    opacity: .4;
+    }
+
+.w-graph__x-axis-tick {
+    stroke: RGBA(240, 240, 240, .1);
+    transition: opacity .3s;
+    }
+
+.w-graph__x-axis-text {
+    fill: RGBA(240, 240, 240, .25);
+    font-size: 12px;
+    font-weight: 200;
+    transition: opacity .3s;
+    }
+
+.w-graph__x-axis-tick.-thousand {
+    stroke: RGBA(217, 240, 163, .4);
+    }
+
+.w-graph__x-axis-text.-thousand {
+    fill: RGBA(217, 240, 163, .5);
+    }
+
+/**
+ * DOM Events
+ */
+.w-graph__dom-event.-onload {
+    stroke: RGBA(227, 26, 28, .6);
+    }
+
+.w-graph__dom-text.-onload {
+    fill: RGBA(227, 26, 28, .8);
+    font-size: 11px;
+    font-weight: 200;
+    }
+
+.w-graph__dom-event.-oncontentload {
+    stroke: RGBA(8, 104, 172, .7);
+    }
+
+.w-graph__dom-text.-oncontentload {
+    fill: RGBA(8, 104, 172, .9);
+    font-size: 11px;
+    font-weight: 200;
+    }
