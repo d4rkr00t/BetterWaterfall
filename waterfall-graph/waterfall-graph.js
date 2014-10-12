@@ -165,6 +165,7 @@ var getPageEndTime = function(onLoad, lastEntry, pageStartTime) {
 };
 
 var mainGraphCont = d3.select('.w-graph'),
+    mainLegend = d3.select('.w-graph__main-legend'),
     svg,
     paddings = { top: 100, bottom: 68, left: 18, right: 38 },
     pageStartTime = new Date(data.pages[0].startedDateTime).getTime(),
@@ -298,14 +299,16 @@ var drawEntries = (function(svg) {
 
         var hoverGroup = group
                             .append('g')
-                            .attr('class', '.w-graph__entry-hover-trigger')
+                            .attr('class', 'w-graph__entry-hover-trigger')
                             .on('mouseover', function() {
                                 d3.select(this.parentNode).classed('-hover', true);
                                 mainGraphCont.classed('-hover', true);
+                                mainLegend.classed('-hover', true);
                             })
                             .on('mouseout', function() {
                                 d3.select(this.parentNode).classed('-hover', false);
                                 mainGraphCont.classed('-hover', false);
+                                mainLegend.classed('-hover', false);
                             });
 
         hoverGroup
