@@ -131,23 +131,23 @@
     }
 
     &.-document .w-graph__entry-main {
-        fill: rgba($dullCyan, .65);
+        fill: rgba($dullCyan, .8);
     }
 
     &.-image .w-graph__entry-main {
-        fill: rgba($purple, .65);
+        fill: rgba($purple, .8);
     }
 
     &.-stylesheet .w-graph__entry-main {
-        fill: rgba($christi, .65);
+        fill: rgba($christi, .8);
     }
 
     &.-script .w-graph__entry-main {
-        fill: rgba($pastelOrange, .65);
+        fill: rgba($pastelOrange, .8);
     }
 
     &.-fonts .w-graph__entry-main {
-        fill: rgba($lust, .6);
+        fill: rgba($lust, .7);
     }
 
     &-sub {

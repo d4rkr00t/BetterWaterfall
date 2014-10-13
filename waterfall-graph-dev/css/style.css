@@ -91,15 +91,15 @@
   transition: opacity 0.2s;
   fill: rgba(247, 252, 253, 0.3); }
 .w-graph__entry.-document .w-graph__entry-main {
-  fill: rgba(65, 182, 196, 0.65); }
+  fill: rgba(65, 182, 196, 0.8); }
 .w-graph__entry.-image .w-graph__entry-main {
-  fill: rgba(129, 15, 124, 0.65); }
+  fill: rgba(129, 15, 124, 0.8); }
 .w-graph__entry.-stylesheet .w-graph__entry-main {
-  fill: rgba(102, 166, 30, 0.65); }
+  fill: rgba(102, 166, 30, 0.8); }
 .w-graph__entry.-script .w-graph__entry-main {
-  fill: rgba(254, 178, 76, 0.65); }
+  fill: rgba(254, 178, 76, 0.8); }
 .w-graph__entry.-fonts .w-graph__entry-main {
-  fill: rgba(227, 26, 28, 0.6); }
+  fill: rgba(227, 26, 28, 0.7); }
 .w-graph__entry-sub {
   transition: opacity 0.3s;
   opacity: 0; }
