@@ -30,7 +30,7 @@ define(function () {
     };
     var _hoverListener = function(e) {
         setTimeout(function () {
-            var x = e.target.getBBox().x,
+            var x = e.target.getBBox().x + 18,
                 y = e.target.getBBox().y + 100,
                 legendWidth = _timingsLegend.clientWidth,
                 legendHeight = _timingsLegend.clientHeight,

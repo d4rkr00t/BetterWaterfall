@@ -49,7 +49,8 @@
     opacity: 1; }
   .w-graph-legend.w-graph__timings-legend {
     display: none;
-    position: relative; }
+    position: relative;
+    background: rgba(26, 26, 26, 0.5); }
     .w-graph-legend.w-graph__timings-legend li {
       display: none; }
     .w-graph-legend.w-graph__timings-legend.-hover {
