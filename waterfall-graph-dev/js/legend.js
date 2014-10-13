@@ -16,7 +16,22 @@ define(function () {
         onScroll();
     };
 
+    var _timingHoverTriggers;
+    var timingsLegend = function() {
+        console.log(_timingHoverTriggers);
+    };
+
+    var timingsLegendGetNewElems = function() {
+        if (_timingHoverTriggers) {
+            _timingHoverTriggers = document.querySelectorAll('.w-graph__entry-hover-trigger');
+        } else {
+            _timingHoverTriggers = document.querySelectorAll('.w-graph__entry-hover-trigger');
+        }
+        timingsLegend();
+    };
+
     return {
-        mainLegend: mainLegend
+        mainLegend: mainLegend,
+        timingsLegend: timingsLegendGetNewElems
     };
 });

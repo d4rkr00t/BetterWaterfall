@@ -7,17 +7,20 @@
  */
 .w-graph-legend {
   display: inline-block;
-  margin: 18px 0 18px 0;
+  margin: 18px 0 9px 0;
   padding: 5px 18px 7px 18px;
   list-style: none;
-  transition: opacity 0.3s;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 30px; }
-  .w-graph-legend.-hover {
+  border-radius: 30px;
+  /**
+     * Legend specific hover behavior
+     */ }
+  .w-graph-legend.-hover li {
     opacity: 0.3; }
   .w-graph-legend.-relative {
     position: relative; }
   .w-graph-legend li {
+    transition: opacity 0.3s;
     font-size: 12px;
     line-height: 18px;
     display: inline-block;
@@ -32,6 +35,41 @@
     margin-right: 6px;
     vertical-align: middle;
     border-radius: 50%; }
+  .w-graph-legend.-hover.-document .-document {
+    opacity: 1; }
+  .w-graph-legend.-hover.-image .-image {
+    opacity: 1; }
+  .w-graph-legend.-hover.-stylesheet .-stylesheet {
+    opacity: 1; }
+  .w-graph-legend.-hover.-script .-script {
+    opacity: 1; }
+  .w-graph-legend.-hover.-fonts .-fonts {
+    opacity: 1; }
+  .w-graph-legend.-hover.-other .-other {
+    opacity: 1; }
+  .w-graph-legend.w-graph__timings-legend {
+    display: none;
+    position: absolute; }
+    .w-graph-legend.w-graph__timings-legend li {
+      display: none; }
+    .w-graph-legend.w-graph__timings-legend.-hover {
+      display: block; }
+      .w-graph-legend.w-graph__timings-legend.-hover li {
+        opacity: 1; }
+      .w-graph-legend.w-graph__timings-legend.-hover.-blocked .-blocked {
+        display: inline-block; }
+      .w-graph-legend.w-graph__timings-legend.-hover.-dns .-dns {
+        display: inline-block; }
+      .w-graph-legend.w-graph__timings-legend.-hover.-send .-send {
+        display: inline-block; }
+      .w-graph-legend.w-graph__timings-legend.-hover.-connect .-connect {
+        display: inline-block; }
+      .w-graph-legend.w-graph__timings-legend.-hover.-wait .-wait {
+        display: inline-block; }
+      .w-graph-legend.w-graph__timings-legend.-hover.-receive .-receive {
+        display: inline-block; }
+      .w-graph-legend.w-graph__timings-legend.-hover.-ssl .-ssl {
+        display: inline-block; }
 
 /**
  * Entry

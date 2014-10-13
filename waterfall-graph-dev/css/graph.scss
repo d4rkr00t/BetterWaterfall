@@ -11,18 +11,19 @@
 .w-graph-legend {
     display: inline-block;
 
-    margin: 18px 0 18px 0;
+    margin: 18px 0 9px 0;
     padding: 5px 18px 7px 18px;
 
     list-style: none;
-
-    transition: opacity .3s;
 
     border: 1px solid rgba($white, .1);
     border-radius: 30px;
 
     &.-hover {
-        opacity: .3;
+
+        li {
+            opacity: .3;
+        }
     }
 
     &.-relative {
@@ -30,6 +31,8 @@
     }
 
     li {
+        transition: opacity .3s;
+
         font-size: 12px;
         line-height: 18px;
 
@@ -53,6 +56,46 @@
         vertical-align: middle;
 
         border-radius: 50%;
+    }
+
+    /**
+     * Legend specific hover behavior
+     */
+
+    &.-hover {
+
+        &.-document .-document { opacity: 1; }
+        &.-image .-image { opacity: 1; }
+        &.-stylesheet .-stylesheet { opacity: 1; }
+        &.-script .-script { opacity: 1; }
+        &.-fonts .-fonts { opacity: 1; }
+        &.-other .-other { opacity: 1; }
+
+    }
+
+    &.w-graph__timings-legend {
+        display: none;
+        position: absolute;
+
+        li {
+            display: none;
+        }
+
+        &.-hover {
+            display: block;
+
+            li {
+                opacity: 1;
+            }
+
+            &.-blocked .-blocked { display: inline-block; }
+            &.-dns .-dns { display: inline-block; }
+            &.-send .-send { display: inline-block; }
+            &.-connect .-connect { display: inline-block; }
+            &.-wait .-wait { display: inline-block; }
+            &.-receive .-receive { display: inline-block; }
+            &.-ssl .-ssl { display: inline-block; }
+        }
     }
 }
 

@@ -33,6 +33,8 @@ var getContentType = function(mimeType) {
             return 'image';
         case 'application/octet-stream':
             return 'fonts';
+        default:
+            return 'other';
     }
 };
 
@@ -169,6 +171,7 @@ var paddings = { top: 100, bottom: 68, left: 18, right: 38 },
 
     mainGraphCont,
     mainLegend,
+    timingsLegend,
     svg,
     width,
     height,
@@ -286,15 +289,35 @@ var drawEntries = (function() {
         var hoverGroup = group
                             .append('g')
                             .attr('class', 'w-graph__entry-hover-trigger')
-                            .on('mouseover', function() {
+                            .on('mouseover', function(d) {
                                 d3.select(this.parentNode).classed('-hover', true);
                                 mainGraphCont.classed('-hover', true);
-                                mainLegend.classed('-hover', true);
+                                mainLegend
+                                    .classed('-hover', true)
+                                    .classed('-' + d.type, true);
+
+                                timingsLegend.classed('-hover', true);
+
+                                for (var timing in d.timings) {
+                                    if ( d.timings.hasOwnProperty(timing) ) {
+                                        d.timings[timing] && timingsLegend.classed('-' + timing, true);
+                                    }
+                                }
                             })
-                            .on('mouseout', function() {
+                            .on('mouseout', function(d) {
                                 d3.select(this.parentNode).classed('-hover', false);
                                 mainGraphCont.classed('-hover', false);
-                                mainLegend.classed('-hover', false);
+                                mainLegend
+                                    .classed('-hover', false)
+                                    .classed('-' + d.type, false);
+
+                                timingsLegend.classed('-hover', false);
+
+                                for (var timing in d.timings) {
+                                    if ( d.timings.hasOwnProperty(timing) ) {
+                                        d.timings[timing] && timingsLegend.classed('-' + timing, false);
+                                    }
+                                }
                             });
 
         hoverGroup
@@ -494,6 +517,7 @@ return {
 
         !mainGraphCont && (mainGraphCont = d3.select('.w-graph'));
         !mainLegend && (mainLegend = d3.select('.w-graph__main-legend'));
+        !timingsLegend && (timingsLegend = d3.select('.w-graph__timings-legend'));
 
         /**
          * Define graph sizes

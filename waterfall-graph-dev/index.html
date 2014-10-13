@@ -8,12 +8,48 @@
 <body class="w-graph__cont">
 
     <ul class="w-graph__main-legend w-graph-legend -relative">
-        <li><span class="w-graph-legend-color" style="background: RGBA(65, 182, 196, .8);"></span> document</li>
-        <li><span class="w-graph-legend-color" style="background: RGBA(129, 15, 124, .8);"></span> image</li>
-        <li><span class="w-graph-legend-color" style="background: RGBA(127, 188, 65, .8);"></span> stylesheet</li>
-        <li><span class="w-graph-legend-color" style="background: RGBA(254, 178, 76, .8);"></span> script</li>
-        <li><span class="w-graph-legend-color" style="background: RGBA(227, 26, 28, .75);"></span> fonts</li>
-        <li><span class="w-graph-legend-color" style="background: RGBA(247, 252, 253, .5);"></span> other</li>
+        <li class="-document">
+            <span class="w-graph-legend-color" style="background: RGBA(65, 182, 196, .8);"></span> document
+        </li>
+        <li class="-image">
+            <span class="w-graph-legend-color" style="background: RGBA(129, 15, 124, .8);"></span> image
+        </li>
+        <li class="-stylesheet">
+            <span class="w-graph-legend-color" style="background: RGBA(127, 188, 65, .8);"></span> stylesheet
+        </li>
+        <li class="-script">
+            <span class="w-graph-legend-color" style="background: RGBA(254, 178, 76, .8);"></span> script
+        </li>
+        <li class="-fonts">
+            <span class="w-graph-legend-color" style="background: RGBA(227, 26, 28, .75);"></span> fonts
+        </li>
+        <li class="-other">
+            <span class="w-graph-legend-color" style="background: RGBA(247, 252, 253, .5);"></span> other
+        </li>
+    </ul>
+
+    <ul class="w-graph__timings-legend w-graph-legend">
+        <li class="-blocked">
+            <span class="w-graph-legend-color" style="background: rgba(130, 130, 130, 0.8);"></span> blocked
+        </li>
+        <li class="-dns">
+            <span class="w-graph-legend-color" style="background: rgba(254, 178, 76, 0.8);"></span> dns
+        </li>
+        <li class="-send">
+            <span class="w-graph-legend-color" style="background: rgba(117, 112, 179, 0.8);"></span> send
+        </li>
+        <li class="-connect">
+            <span class="w-graph-legend-color" style="background: rgba(231, 41, 138, 0.8);"></span> connect
+        </li>
+        <li class="-wait">
+            <span class="w-graph-legend-color" style="background: rgba(102, 166, 30, 0.8);"></span> wait
+        </li>
+        <li class="-receive">
+            <span class="w-graph-legend-color" style="background: rgba(33, 102, 172, 0.8);"></span> receive
+        </li>
+        <li class="-ssl">
+            <span class="w-graph-legend-color" style="background: rgba(254, 178, 76, 0.8);"></span> ssl
+        </li>
     </ul>
 
     <svg class="w-graph"></svg>
