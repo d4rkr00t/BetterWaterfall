@@ -1,10 +1,11 @@
-(function () {
 /**
  *
  * Waterfall graph
  *
  */
-var vStep = 5;
+define(['vendor/d3/d3.min'], function (d3) {
+
+var vStep = 3;
 
 var formatSize = function(size) {
     size = (size / 1024);
@@ -164,41 +165,22 @@ var getPageEndTime = function(onLoad, lastEntry, pageStartTime) {
     return Math.ceil(lastEntry.endTime - pageStartTime) + 200;
 };
 
-var mainGraphCont = d3.select('.w-graph'),
-    mainLegend = d3.select('.w-graph__main-legend'),
+var paddings = { top: 100, bottom: 68, left: 18, right: 38 },
+
+    mainGraphCont,
+    mainLegend,
     svg,
-    paddings = { top: 100, bottom: 68, left: 18, right: 38 },
-    pageStartTime = new Date(data.pages[0].startedDateTime).getTime(),
-    entries = prepEntriesData(data.entries, pageStartTime),
-    onLoad = data.pages[0].pageTimings.onLoad,
-    onContentLoad = data.pages[0].pageTimings.onContentLoad,
-    pageEndTime = getPageEndTime(onLoad, entries[entries.length - 1], pageStartTime),
-    width = Math.ceil(pageEndTime),
-    height = getGraphHeight(entries),
-    mainHost = entries[0].host,
+    width,
+    height,
     xScale,
-    yScale;
+    yScale,
 
-/**
- * Define graph sizes
- */
-svg = mainGraphCont
-        .attr('width', width + paddings.left + paddings.right)
-        .attr('height', height + paddings.top + paddings.bottom)
-    .append('g')
-        .attr('transform', 'translate(' + paddings.left + ',' + paddings.top + ')');
-
-
-/**
- * Create graph scales
- */
-xScale = d3.scale.linear()
-            .domain([0, width])
-            .range([0, width]);
-
-yScale = d3.scale.linear()
-            .domain([0, height])
-            .range([0, height]);
+    pageStartTime,
+    pageEndTime,
+    entries,
+    mainHost,
+    onLoad,
+    onContentLoad;
 
 /**
  *
@@ -208,11 +190,13 @@ yScale = d3.scale.linear()
  *
  */
 
-var drawXAxis = (function(svg) {
-    var cont = svg.append('g').attr('class', 'w-graph__x-axis'),
+var drawXAxis = (function() {
+    var cont,
         step = 100;
 
-    return function (width, height, paddings) {
+    return function (svg, width, height, paddings) {
+        if (!svg.select('.w-graph__x-axis') || !cont) cont = svg.append('g').attr('class', 'w-graph__x-axis');
+
         var count = new Array(Math.floor((width / step))),
             groups = cont.selectAll('.w-graph__x-axis-tick')
                             .data(count)
@@ -241,13 +225,14 @@ var drawXAxis = (function(svg) {
                 return 'w-graph__x-axis-text';
             });
     };
-})(svg);
-drawXAxis(width, height, paddings);
+})();
 
-var drawDOMEvents = (function(svg) {
-    var cont = svg.append('g').attr('class', 'w-graph__dom-events');
+var drawDOMEvents = (function() {
+    var cont;
 
-    return function (onLoad, onContentLoad, paddings) {
+    return function (svg, onLoad, onContentLoad, paddings) {
+        if (!svg.select('.w-graph__dom-events') || !cont) cont = svg.append('g').attr('class', 'w-graph__dom-events');
+
         cont
             .append('line')
             .attr('x1', xScale(onLoad))
@@ -280,13 +265,14 @@ var drawDOMEvents = (function(svg) {
             .attr('text-anchor', 'right')
             .attr('class', 'w-graph__dom-text -oncontentload');
     };
-})(svg);
-drawDOMEvents(onLoad, onContentLoad, paddings)
+})();
 
-var drawEntries = (function(svg) {
-    var cont = svg.append('g').attr('class', 'w-graph__entries');
+var drawEntries = (function() {
+    var cont;
 
-    return function (entries) {
+    return function (svg, entries) {
+        if (!svg.select('.w-graph__entries') || !cont) cont = svg.append('g').attr('class', 'w-graph__entries');
+
         /**
          * Main Entry time
          */
@@ -493,7 +479,46 @@ var drawEntries = (function(svg) {
             .attr('class', 'w-graph__entry-sub-info__text -total');
 
     };
-})(svg);
-drawEntries(entries);
-
 })();
+
+return {
+    render: function (data) {
+        pageStartTime = new Date(data.pages[0].startedDateTime).getTime();
+        entries = prepEntriesData(data.entries, pageStartTime);
+        onLoad = data.pages[0].pageTimings.onLoad;
+        onContentLoad = data.pages[0].pageTimings.onContentLoad;
+        pageEndTime = getPageEndTime(onLoad, entries[entries.length - 1], pageStartTime);
+        width = Math.ceil(pageEndTime);
+        height = getGraphHeight(entries);
+        mainHost = entries[0].host;
+
+        !mainGraphCont && (mainGraphCont = d3.select('.w-graph'));
+        !mainLegend && (mainLegend = d3.select('.w-graph__main-legend'));
+
+        /**
+         * Define graph sizes
+         */
+        !svg && (svg = mainGraphCont
+                    .attr('width', width + paddings.left + paddings.right)
+                    .attr('height', height + paddings.top + paddings.bottom)
+                .append('g')
+                    .attr('transform', 'translate(' + paddings.left + ',' + paddings.top + ')'));
+
+        /**
+         * Create graph scales
+         */
+        xScale = d3.scale.linear()
+                    .domain([0, width])
+                    .range([0, width]);
+
+        yScale = d3.scale.linear()
+                    .domain([0, height])
+                    .range([0, height]);
+
+        drawXAxis(svg, width, height, paddings);
+        drawDOMEvents(svg, onLoad, onContentLoad, paddings);
+        drawEntries(svg, entries);
+    }
+};
+
+});

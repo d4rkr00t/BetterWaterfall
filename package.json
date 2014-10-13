@@ -1,0 +1,10 @@
+{
+  "name": "better-waterfall",
+  "version": "0.0.1",
+  "description": "Better Waterfall Graph for Chrome",
+  "dependencies": {
+    "browser-sync": "^1.5.7",
+    "gulp": "^3.8.8",
+    "gulp-sass": "^1.1.0"
+  }
+}

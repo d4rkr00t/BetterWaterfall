@@ -1,4 +1,4 @@
-var data = {
+define({
   "pages": [{
     "startedDateTime": "2014-10-12T12:04:38.734Z",
     "id": "page_1",
@@ -5453,4 +5453,4 @@ var data = {
     "connection": "82747",
     "pageref": "page_1"
   }]
-};
+});

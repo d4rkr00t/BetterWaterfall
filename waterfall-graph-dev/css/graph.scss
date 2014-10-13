@@ -1,7 +1,7 @@
 .w-graph__cont {
     font-family: Helvetica Neue, Helveica, Arial, sans-serif;
 
-    background: #1a1a1a;
+    background: $darkJungleGreen;
 }
 
 
@@ -20,7 +20,7 @@
 
     transition: opacity .3s;
 
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba($white, .1);
     border-radius: 30px;
 }
 
@@ -40,7 +40,7 @@
 
     margin-right: 12px;
 
-    color: rgba(255, 255, 255, .4);
+    color: rgba($white, .4);
 }
 
 .w-graph-legend-color {
@@ -84,27 +84,27 @@
 .w-graph__entry .w-graph__entry-main {
     transition: opacity .2s;
 
-    fill: RGBA(247, 252, 253, .3);
+    fill: rgba($mintCream, .3);
 }
 
 .w-graph__entry.-document .w-graph__entry-main {
-    fill: RGBA(65, 182, 196, .65);
+    fill: rgba($dullCyan, .65);
 }
 
 .w-graph__entry.-image .w-graph__entry-main {
-    fill: RGBA(129, 15, 124, .65);
+    fill: rgba($purple, .65);
 }
 
 .w-graph__entry.-stylesheet .w-graph__entry-main {
-    fill: RGBA(127, 188, 65, .65);
+    fill: rgba($christi, .65);
 }
 
 .w-graph__entry.-script .w-graph__entry-main {
-    fill: RGBA(254, 178, 76, .65);
+    fill: rgba($pastelOrange, .65);
 }
 
 .w-graph__entry.-fonts .w-graph__entry-main {
-    fill: RGBA(227, 26, 28, .6);
+    fill: rgba($lust, .6);
 }
 
 .w-graph__entry-sub {
@@ -114,31 +114,31 @@
 }
 
 .w-graph__entry-sub .-blocked {
-    fill: RGBA(130, 130, 130, .8);
+    fill: rgba($battleshipGrey, .8);
 }
 
 .w-graph__entry-sub .-dns {
-    fill: RGBA(254, 178, 76, .8);
+    fill: rgba($pastelOrange, .8);
 }
 
 .w-graph__entry-sub .-send {
-    fill: RGBA(117, 112, 179, .8);
+    fill: rgba($toolbox, .8);
 }
 
 .w-graph__entry-sub .-connect {
-    fill: RGBA(231, 41, 138, .8);
+    fill: rgba($deepCerise, .8);
 }
 
 .w-graph__entry-sub .-wait {
-    fill: RGBA(102, 166, 30, .8);
+    fill: rgba($christi, .8);
 }
 
 .w-graph__entry-sub .-receive {
-    fill: RGBA(33, 102, 172, .8);
+    fill: rgba($lapisLazuli, .8);
 }
 
 .w-graph__entry-sub .-ssl {
-    fill: RGBA(230, 171, 2, .8);
+    fill: rgba($pastelOrange, .8);
 }
 
 .w-graph__entry-sub-info {
@@ -146,7 +146,7 @@
 }
 
 .w-graph__entry-sub-info__line {
-    stroke: RGBA(255, 255, 255, .3);
+    stroke: rgba($white, .3);
 }
 
 .w-graph__entry-sub-info__text {
@@ -155,40 +155,40 @@
 
     letter-spacing: .04em;
 
-    fill: RGBA(255, 255, 51, .6);
+    fill: rgba($daffodil, .6);
 }
 
 .w-graph__entry-sub-info__text.-name,
 .w-graph__entry-sub-info__text.-host {
-    fill: RGBA(255, 255, 255, .6);
+    fill: rgba($white, .6);
 }
 
 .w-graph__entry-sub-info__text.-host.-diff {
-    fill: RGBA(227, 26, 28, .8);
+    fill: rgba($lust, .8);
 }
 
 .w-graph__entry-sub-info__text.-total {
-    fill: RGBA(65, 182, 196, .9);
+    fill: rgba($dullCyan, .9);
 }
 
 .w-graph__entry-sub-info__text.-document {
-    fill: RGBA(65, 182, 196, .9);
+    fill: rgba($dullCyan, .9);
 }
 
 .w-graph__entry-sub-info__text.-image {
-    fill: RGBA(201, 148, 199, .9);
+    fill: rgba($pastelViolet, .9);
 }
 
 .w-graph__entry-sub-info__text.-stylesheet {
-    fill: RGBA(127, 188, 65, .9);
+    fill: rgba($christi, .9);
 }
 
 .w-graph__entry-sub-info__text.-script {
-    fill: RGBA(254, 178, 76, .9);
+    fill: rgba($pastelOrange, .9);
 }
 
 .w-graph__entry-sub-info__text.-fonts {
-    fill: RGBA(227, 26, 28, .8);
+    fill: rgba($lust, .8);
 }
 
 /**
@@ -203,7 +203,7 @@
 .w-graph__x-axis-tick {
     transition: opacity .3s;
 
-    stroke: RGBA(240, 240, 240, .1);
+    stroke: rgba($lightGrey, .1);
 }
 
 .w-graph__x-axis-text {
@@ -212,38 +212,38 @@
 
     transition: opacity .3s;
 
-    fill: RGBA(240, 240, 240, .25);
+    fill: rgba($lightGrey, .25);
 }
 
 .w-graph__x-axis-tick.-thousand {
-    stroke: RGBA(217, 240, 163, .4);
+    stroke: rgba($reef, .4);
 }
 
 .w-graph__x-axis-text.-thousand {
-    fill: RGBA(217, 240, 163, .5);
+    fill: rgba($reef, .5);
 }
 
 /**
  * DOM Events
  */
 .w-graph__dom-event.-onload {
-    stroke: RGBA(227, 26, 28, .6);
+    stroke: rgba($lust, .6);
 }
 
 .w-graph__dom-text.-onload {
     font-size: 11px;
     font-weight: 200;
 
-    fill: RGBA(227, 26, 28, .8);
+    fill: rgba($lust, .8);
 }
 
 .w-graph__dom-event.-oncontentload {
-    stroke: RGBA(8, 104, 172, .7);
+    stroke: rgba($lapisLazuli, .7);
 }
 
 .w-graph__dom-text.-oncontentload {
     font-size: 11px;
     font-weight: 200;
 
-    fill: RGBA(8, 104, 172, .9);
+    fill: rgba($lapisLazuli, .9);
 }
