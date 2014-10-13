@@ -178,6 +178,8 @@ var paddings = { top: 100, bottom: 68, left: 18, right: 38 },
     xScale,
     yScale,
 
+    callback,
+
     pageStartTime,
     pageEndTime,
     entries,
@@ -289,6 +291,9 @@ var drawEntries = (function() {
         var hoverGroup = group
                             .append('g')
                             .attr('class', 'w-graph__entry-hover-trigger')
+                            .on('click', function(d) {
+                                callback(d);
+                            })
                             .on('mouseover', function(d) {
                                 d3.select(this.parentNode).classed('-hover', true);
                                 mainGraphCont.classed('-hover', true);
@@ -471,7 +476,7 @@ var drawEntries = (function() {
         entryInfoGroup
             .append('text')
             .text(function (d) {
-                return 'Received Size: ' + ( Math.round( (d.size / 1024) * 100 ) / 100 ) + ' KB'
+                return 'Size: ' + ( Math.round( (d.size / 1024) * 100 ) / 100 ) + ' KB'
             })
             .attr('x', textX)
             .attr('y', function (d) {
@@ -505,7 +510,9 @@ var drawEntries = (function() {
 })();
 
 return {
-    render: function (data) {
+    render: function (data, cb) {
+        callback = cb;
+
         pageStartTime = new Date(data.pages[0].startedDateTime).getTime();
         entries = prepEntriesData(data.entries, pageStartTime);
         onLoad = data.pages[0].pageTimings.onLoad;

@@ -1,7 +1,14 @@
-.w-graph__cont {
+body {
     font-family: Helvetica Neue, Helveica, Arial, sans-serif;
 
     background: $darkJungleGreen;
+}
+
+.w-graph__cont {
+    &.-blur {
+        box-sizing: border-box;
+        opacity: .2;
+    }
 }
 
 /**

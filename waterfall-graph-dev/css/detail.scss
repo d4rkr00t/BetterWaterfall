@@ -1,0 +1,165 @@
+.w-detail {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+
+    min-width: 450px;
+    width: 100%;
+    height: 100%;
+    display: none;
+
+    background: rgba($darkJungleGreen, .7);
+
+    &.-opened {
+        display: block;
+    }
+
+    &-graph {
+        display: block;
+
+        margin: 27px auto 27px;
+    }
+
+    &__cont {
+        overflow: auto;
+
+        width: 100%;
+        height: 100%;
+    }
+
+    &__title {
+        font-size: 42px;
+        font-weight: 100;
+
+        margin: 20px 0 0 0;
+        padding: 0;
+
+        text-align: center;
+        letter-spacing: 2px;
+
+        color: rgba($white, .6);
+    }
+
+    &__info {
+        font-size: 16px;
+        text-align: center;
+        font-weight: 200;
+        margin: 27px 0 0 0;
+        color: rgba($lightGrey, .3);
+
+        .w-detail__host {
+            color: rgba($lightGrey, .3);
+            margin-right: 12px;
+        }
+
+        .w-detail__mime-type {
+            margin-left: 12px;
+
+            &.-document {
+                color: rgba($dullCyan, .9);
+            }
+
+            &.-image {
+                color: rgba($pastelViolet, .9);
+            }
+
+            &.-stylesheet {
+                color: rgba($christi, .9);
+            }
+
+            &.-script {
+                color: rgba($pastelOrange, .9);
+            }
+
+            &.-fonts {
+                color: rgba($lust, .8);
+            }
+        }
+    }
+
+
+    &__timing {
+
+        &-title {
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        &-info {
+            font-size: 13px;
+            font-weight: 300;
+            fill: rgba($white, .4);
+
+            &.-percent {
+                font-size: 11px;
+                fill: rgba($daffodil, .4);
+            }
+
+            &.-max {
+                fill: rgba($lust, .7);
+            }
+        }
+
+        &-entry {
+            opacity: .7;
+        }
+
+        &-entry, &-title {
+            &.-blocked {
+                fill: rgba($battleshipGrey, 1);
+            }
+
+            &.-dns {
+                fill: rgba($pastelOrange, 1);
+            }
+
+            &.-send {
+                fill: rgba($toolbox, 1);
+            }
+
+            &.-connect {
+                fill: rgba($deepCerise, 1);
+            }
+
+            &.-wait {
+                fill: rgba($christi, 1);
+            }
+
+            &.-receive {
+                fill: rgba($lapisLazuli, 1);
+            }
+
+            &.-ssl {
+                fill: rgba($pastelOrange, 1);
+            }
+        }
+    }
+
+    &__total-time {
+
+        &__line {
+            stroke: rgba($lightGrey, .3);
+            stroke-width: 1px;
+        }
+
+        &__text {
+            font-size: 12px;
+            font-weight: 300;
+            fill: rgba($white, .4);
+        }
+    }
+
+    &__size {
+        font-size: 12px;
+        font-weight: 300;
+
+        &.-size {
+            fill: rgba($christi, .7);
+        }
+
+        &.-content-size {
+            fill: rgba($pastelOrange, .7);
+        }
+    }
+}

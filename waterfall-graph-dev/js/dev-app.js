@@ -7,9 +7,12 @@ requirejs.config({
 });
 
 // Start the main app logic.
-requirejs(['app/legend', 'app/sample-data', 'app/waterfall-graph'], function (legend, data, waterfall) {
-    legend.mainLegend();
+requirejs(
+    ['app/legend', 'app/sample-data', 'app/detail-data', 'app/waterfall-graph', 'app/detail-graph'],
+    function (legend, waterfallData, detailData, waterfall, detail) {
+        legend.mainLegend();
 
-    waterfall.render(data);
-    legend.timingsLegend();
-});
+        waterfall.render(waterfallData, detail.render);
+        legend.timingsLegend();
+
+    });
