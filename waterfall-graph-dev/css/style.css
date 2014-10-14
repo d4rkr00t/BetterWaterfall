@@ -2,9 +2,8 @@ body {
   font-family: Helvetica Neue, Helveica, Arial, sans-serif;
   background: #1A1A1A; }
 
-.w-graph__cont.-blur {
-  box-sizing: border-box;
-  opacity: 0.2; }
+.w-graph__cont {
+  position: relative; }
 
 /**
  * Legend
@@ -183,53 +182,15 @@ body {
   fill: rgba(33, 102, 172, 0.9); }
 
 .w-detail {
-  position: fixed;
+  position: absolute;
   z-index: 1;
   top: 0;
   left: 0;
-  min-width: 450px;
-  width: 100%;
-  height: 100%;
-  display: none;
-  background: rgba(26, 26, 26, 0.7); }
+  display: none; }
   .w-detail.-opened {
     display: block; }
   .w-detail-graph {
-    display: block;
-    margin: 27px auto 27px; }
-  .w-detail__cont {
-    overflow: auto;
-    width: 100%;
-    height: 100%; }
-  .w-detail__title {
-    font-size: 42px;
-    font-weight: 100;
-    margin: 20px 0 0 0;
-    padding: 0;
-    text-align: center;
-    letter-spacing: 2px;
-    color: rgba(255, 255, 255, 0.6); }
-  .w-detail__info {
-    font-size: 16px;
-    text-align: center;
-    font-weight: 200;
-    margin: 27px 0 0 0;
-    color: rgba(240, 240, 240, 0.3); }
-    .w-detail__info .w-detail__host {
-      color: rgba(240, 240, 240, 0.3);
-      margin-right: 12px; }
-    .w-detail__info .w-detail__mime-type {
-      margin-left: 12px; }
-      .w-detail__info .w-detail__mime-type.-document {
-        color: rgba(65, 182, 196, 0.9); }
-      .w-detail__info .w-detail__mime-type.-image {
-        color: rgba(201, 148, 199, 0.9); }
-      .w-detail__info .w-detail__mime-type.-stylesheet {
-        color: rgba(102, 166, 30, 0.9); }
-      .w-detail__info .w-detail__mime-type.-script {
-        color: rgba(254, 178, 76, 0.9); }
-      .w-detail__info .w-detail__mime-type.-fonts {
-        color: rgba(227, 26, 28, 0.8); }
+    display: block; }
   .w-detail__timing-title {
     font-size: 13px;
     font-weight: 300; }
@@ -243,7 +204,7 @@ body {
     .w-detail__timing-info.-max {
       fill: rgba(227, 26, 28, 0.7); }
   .w-detail__timing-entry {
-    opacity: 0.7; }
+    opacity: 0.8; }
   .w-detail__timing-entry.-blocked, .w-detail__timing-title.-blocked {
     fill: #828282; }
   .w-detail__timing-entry.-dns, .w-detail__timing-title.-dns {

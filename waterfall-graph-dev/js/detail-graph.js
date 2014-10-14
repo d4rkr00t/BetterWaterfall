@@ -6,7 +6,7 @@ define(['vendor/d3/d3.min'], function(d3) {
         height = 0,
         xScale,
         yScale,
-        vStep = 51,
+        vStep = 39,
         timings = [],
         max = 0,
         detailCont = d3.select('.w-detail'),
@@ -111,7 +111,7 @@ define(['vendor/d3/d3.min'], function(d3) {
                 })
                 .text(function (d) { return d.ms; })
                 .attr('x', function (d) { return xScale(d.xPos + d.val) + 10; })
-                .attr('y', function (d, i) { return yScale(i) + 22; })
+                .attr('y', function (d, i) { return yScale(i) + 17; })
                 .attr('text-anchor', 'start');
 
             group
@@ -119,7 +119,7 @@ define(['vendor/d3/d3.min'], function(d3) {
                 .attr('class', 'w-detail__timing-info -percent')
                 .text(function (d) { return d.percent; })
                 .attr('x', function (d) { return xScale(d.xPos + d.val) + 10; })
-                .attr('y', function (d, i) { return yScale(i) + 38; })
+                .attr('y', function (d, i) { return yScale(i) + 33; })
                 .attr('text-anchor', 'start');
 
         };
@@ -136,40 +136,16 @@ define(['vendor/d3/d3.min'], function(d3) {
                 .attr('class', 'w-detail__total-time__line')
                 .attr('x1', 0)
                 .attr('x2', xScale(data.time))
-                .attr('y1', height + 18.5)
-                .attr('y2', height + 18.5);
+                .attr('y1', height + 14.5)
+                .attr('y2', height + 14.5);
 
             cont
                 .append('text')
                 .attr('class', 'w-detail__total-time__text')
                 .text('Total Time: ' + (Math.ceil(data.time * 100) / 100) + ' ms')
                 .attr('x', xScale(data.time) / 2)
-                .attr('y', height + 38)
+                .attr('y', height + 34)
                 .attr('text-anchor', 'middle');
-        };
-    })();
-
-    var drawSizes = (function() {
-        var cont;
-
-        return function (svg, data) {
-            if (!!svg.select('.w-detail__sizes')[0]) cont = svg.append('g').attr('class', 'w-detail__sizes');
-
-            cont
-                .append('text')
-                .attr('class', 'w-detail__size -size')
-                .text('Size: ' + (Math.ceil((data.size / 1024) * 100) / 100) + ' KB')
-                .attr('x', xScale(data.time) + paddings.right)
-                .attr('y', 18)
-                .attr('text-anchor', 'end');
-
-            cont
-                .append('text')
-                .attr('class', 'w-detail__size -content-size')
-                .text('Content: ' + (Math.ceil((data.contentSize / 1024) * 100) / 100) + ' KB')
-                .attr('x', xScale(data.time) + paddings.right)
-                .attr('y', 38)
-                .attr('text-anchor', 'end');
         };
     })();
 
@@ -193,6 +169,10 @@ define(['vendor/d3/d3.min'], function(d3) {
     var resize = function(data) {
         height = (timings.length * vStep) - paddings.top - paddings.bottom;
 
+        mainGraphCont
+            .attr('width', width + paddings.left + paddings.right)
+            .attr('height', height + paddings.top + paddings.bottom + 50)
+
         xScale
             .domain([0, data.time])
             .range([1, width]);
@@ -200,14 +180,6 @@ define(['vendor/d3/d3.min'], function(d3) {
         yScale
             .domain([0, height / vStep])
             .range([0, height]);
-    };
-
-    var setStaticData = function(data) {
-        title.text(data.name);
-        host.text(data.host);
-        mimeType
-            .text(data.mimeType)
-            .attr('class', 'w-detail__mime-type -' + data.type);
     };
 
     detailCont.on('click', function  () {
@@ -225,12 +197,10 @@ define(['vendor/d3/d3.min'], function(d3) {
             }
 
             cleanUp();
-            setStaticData(data);
             open();
 
             drawTimings(svg, data, timings);
             drawTotalTime(svg, data);
-            drawSizes(svg, data);
         }
     };
 });

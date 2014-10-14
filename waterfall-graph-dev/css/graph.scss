@@ -5,10 +5,7 @@ body {
 }
 
 .w-graph__cont {
-    &.-blur {
-        box-sizing: border-box;
-        opacity: .2;
-    }
+    position: relative;
 }
 
 /**

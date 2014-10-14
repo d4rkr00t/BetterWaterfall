@@ -1,15 +1,10 @@
 .w-detail {
-    position: fixed;
+    position: absolute;
     z-index: 1;
     top: 0;
     left: 0;
 
-    min-width: 450px;
-    width: 100%;
-    height: 100%;
     display: none;
-
-    background: rgba($darkJungleGreen, .7);
 
     &.-opened {
         display: block;
@@ -17,67 +12,7 @@
 
     &-graph {
         display: block;
-
-        margin: 27px auto 27px;
     }
-
-    &__cont {
-        overflow: auto;
-
-        width: 100%;
-        height: 100%;
-    }
-
-    &__title {
-        font-size: 42px;
-        font-weight: 100;
-
-        margin: 20px 0 0 0;
-        padding: 0;
-
-        text-align: center;
-        letter-spacing: 2px;
-
-        color: rgba($white, .6);
-    }
-
-    &__info {
-        font-size: 16px;
-        text-align: center;
-        font-weight: 200;
-        margin: 27px 0 0 0;
-        color: rgba($lightGrey, .3);
-
-        .w-detail__host {
-            color: rgba($lightGrey, .3);
-            margin-right: 12px;
-        }
-
-        .w-detail__mime-type {
-            margin-left: 12px;
-
-            &.-document {
-                color: rgba($dullCyan, .9);
-            }
-
-            &.-image {
-                color: rgba($pastelViolet, .9);
-            }
-
-            &.-stylesheet {
-                color: rgba($christi, .9);
-            }
-
-            &.-script {
-                color: rgba($pastelOrange, .9);
-            }
-
-            &.-fonts {
-                color: rgba($lust, .8);
-            }
-        }
-    }
-
 
     &__timing {
 
@@ -102,7 +37,7 @@
         }
 
         &-entry {
-            opacity: .7;
+            opacity: .8;
         }
 
         &-entry, &-title {
