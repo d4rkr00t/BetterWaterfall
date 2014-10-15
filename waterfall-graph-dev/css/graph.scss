@@ -26,7 +26,7 @@ body {
     border: 1px solid rgba($white, .1);
     border-radius: 30px;
 
-    &.-hover {
+    &.-hover, &.-click {
 
         li {
             opacity: .3;
@@ -69,7 +69,7 @@ body {
      * Legend specific hover behavior
      */
 
-    &.-hover {
+    &.-hover, &.-click {
 
         &.-document .-document { opacity: 1; }
         &.-image .-image { opacity: 1; }
@@ -111,16 +111,20 @@ body {
  * Entry
  */
 
-.w-graph.-hover .w-graph__entry .w-graph__entry-main {
+.w-graph.-hover .w-graph__entry .w-graph__entry-main,
+.w-graph.-click .w-graph__entry .w-graph__entry-main {
     opacity: .3;
 }
 
-.w-graph.-hover .w-graph__entry .w-graph__entry-main.-hover {
+.w-graph.-hover .w-graph__entry .w-graph__entry-main.-hover,
+.w-graph.-hover .w-graph__entry .w-graph__entry-main.-click {
     opacity: 0;
 }
 
 .w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub,
-.w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub-info {
+.w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub-info,
+.w-graph.-click .w-graph__entry.-click .w-graph__entry-sub,
+.w-graph.-click .w-graph__entry.-click .w-graph__entry-sub-info {
     display: block;
 
     opacity: 1;

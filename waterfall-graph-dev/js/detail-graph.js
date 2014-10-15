@@ -13,7 +13,8 @@ define(['vendor/d3/d3.min'], function(d3) {
         waterfallCont = d3.select('.w-graph__cont')
         title = detailCont.select('.w-detail__title'),
         host = detailCont.select('.w-detail__host'),
-        mimeType = detailCont.select('.w-detail__mime-type');
+        mimeType = detailCont.select('.w-detail__mime-type'),
+        callback = false;
 
     var prepareTimings = function(data) {
         var propList = ['blocked', 'dns', 'connect', 'send', 'wait', 'receive', 'ssl'],
@@ -184,6 +185,7 @@ define(['vendor/d3/d3.min'], function(d3) {
     var close = function() {
         waterfallCont.classed('-blur', false);
         detailCont.classed('-opened', false);
+        callback && callback();
     };
 
     var cleanUp = function() {
@@ -215,8 +217,9 @@ define(['vendor/d3/d3.min'], function(d3) {
     });
 
     return {
-        render: function (data) {
+        render: function (data, cb) {
             timings = prepareTimings(data);
+            callback = cb;
 
             if (!mainGraphCont) {
                 prepareMainGraph(data);

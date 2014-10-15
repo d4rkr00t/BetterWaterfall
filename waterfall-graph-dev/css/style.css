@@ -19,7 +19,7 @@ body {
   /**
      * Legend specific hover behavior
      */ }
-  .w-graph-legend.-hover li {
+  .w-graph-legend.-hover li, .w-graph-legend.-click li {
     opacity: 0.3; }
   .w-graph-legend.-relative {
     position: relative; }
@@ -39,17 +39,17 @@ body {
     margin-right: 6px;
     vertical-align: middle;
     border-radius: 50%; }
-  .w-graph-legend.-hover.-document .-document {
+  .w-graph-legend.-hover.-document .-document, .w-graph-legend.-click.-document .-document {
     opacity: 1; }
-  .w-graph-legend.-hover.-image .-image {
+  .w-graph-legend.-hover.-image .-image, .w-graph-legend.-click.-image .-image {
     opacity: 1; }
-  .w-graph-legend.-hover.-stylesheet .-stylesheet {
+  .w-graph-legend.-hover.-stylesheet .-stylesheet, .w-graph-legend.-click.-stylesheet .-stylesheet {
     opacity: 1; }
-  .w-graph-legend.-hover.-script .-script {
+  .w-graph-legend.-hover.-script .-script, .w-graph-legend.-click.-script .-script {
     opacity: 1; }
-  .w-graph-legend.-hover.-fonts .-fonts {
+  .w-graph-legend.-hover.-fonts .-fonts, .w-graph-legend.-click.-fonts .-fonts {
     opacity: 1; }
-  .w-graph-legend.-hover.-other .-other {
+  .w-graph-legend.-hover.-other .-other, .w-graph-legend.-click.-other .-other {
     opacity: 1; }
   .w-graph-legend.w-graph__timings-legend {
     display: none;
@@ -79,13 +79,13 @@ body {
 /**
  * Entry
  */
-.w-graph.-hover .w-graph__entry .w-graph__entry-main {
+.w-graph.-hover .w-graph__entry .w-graph__entry-main, .w-graph.-click .w-graph__entry .w-graph__entry-main {
   opacity: 0.3; }
 
-.w-graph.-hover .w-graph__entry .w-graph__entry-main.-hover {
+.w-graph.-hover .w-graph__entry .w-graph__entry-main.-hover, .w-graph.-hover .w-graph__entry .w-graph__entry-main.-click {
   opacity: 0; }
 
-.w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub, .w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub-info {
+.w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub, .w-graph.-hover .w-graph__entry.-hover .w-graph__entry-sub-info, .w-graph.-click .w-graph__entry.-click .w-graph__entry-sub, .w-graph.-click .w-graph__entry.-click .w-graph__entry-sub-info {
   display: block;
   opacity: 1; }
 
@@ -198,9 +198,9 @@ body {
     display: block;
     margin: 27px auto 27px; }
   .w-detail__cont {
-    overflow: auto;
-    width: 100%;
-    height: 100%; }
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%); }
   .w-detail__title {
     font-size: 42px;
     font-weight: 100;

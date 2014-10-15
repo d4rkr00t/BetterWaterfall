@@ -288,11 +288,28 @@ var drawEntries = (function() {
                             return 'w-graph__entry -' + d.type;
                         });
 
+        var _hover = function(el, d) {
+
+        };
+
         var hoverGroup = group
                             .append('g')
                             .attr('class', 'w-graph__entry-hover-trigger')
                             .on('click', function(d) {
-                                callback(d);
+                                var _this = this;
+                                callback(d, function () {
+                                    d3.select(_this.parentNode).classed('-click', false);
+                                    mainGraphCont.classed('-click', false);
+                                    mainLegend
+                                        .classed('-click', false)
+                                        .classed('-' + d.type, false);
+                                });
+
+                                d3.select(this.parentNode).classed('-click', true);
+                                mainGraphCont.classed('-click', true);
+                                mainLegend
+                                    .classed('-click', true)
+                                    .classed('-' + d.type, true);
                             })
                             .on('mouseover', function(d) {
                                 d3.select(this.parentNode).classed('-hover', true);
