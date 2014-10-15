@@ -251,11 +251,7 @@ body {
     &-tick {
         transition: opacity .3s;
 
-        stroke: rgba($lightGrey, .1);
-
-        &.-thousand {
-            stroke: rgba($reef, .4);
-        }
+        stroke: rgba($lightGrey, .05);
     }
 
     &-text {
@@ -265,10 +261,6 @@ body {
         transition: opacity .3s;
 
         fill: rgba($lightGrey, .25);
-
-        &.-thousand {
-            fill: rgba($reef, .5);
-        }
     }
 }
 
