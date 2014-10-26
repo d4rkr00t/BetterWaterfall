@@ -188,7 +188,7 @@ define(['vendor/d3/d3.min'], function(d3) {
     };
 
     var cleanUp = function() {
-        svg.selectAll('*').remove();
+        svg && svg.selectAll('*').remove();
         detailCont.classed('-open', false);
     };
 
