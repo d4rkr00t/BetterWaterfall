@@ -4,15 +4,31 @@
     top: 0;
     left: 0;
 
-    min-width: 450px;
+    display: block;
+
     width: 100%;
+    max-width: 350px;
     height: 100%;
-    display: none;
 
     background: rgba($darkJungleGreen, .7);
 
-    &.-opened {
-        display: block;
+    &__closed {
+        margin: 20px 0 0 0;
+        padding: 0 30px;
+
+        text-align: center;
+        letter-spacing: 1px;
+
+        color: rgba($white, .6);
+
+        font-size: 21px;
+        font-weight: 100;
+
+        word-wrap: break-word;
+
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     &-graph {
@@ -23,33 +39,45 @@
 
     &__cont {
         position: relative;
+
+        display: none;
+
+        overflow-y: auto;
+
+        position: relative;
         top: 50%;
         transform: translateY(-50%);
     }
 
     &__title {
-        font-size: 42px;
-        font-weight: 100;
-
         margin: 20px 0 0 0;
         padding: 0;
 
         text-align: center;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
 
         color: rgba($white, .6);
+
+        font-size: 21px;
+        font-weight: 100;
+
+        word-wrap: break-word;
     }
 
     &__info {
-        font-size: 16px;
-        text-align: center;
-        font-weight: 200;
         margin: 27px 0 0 0;
+
+        text-align: center;
+
         color: rgba($lightGrey, .3);
 
+        font-size: 16px;
+        font-weight: 200;
+
         .w-detail__host {
-            color: rgba($lightGrey, .3);
             margin-right: 12px;
+
+            color: rgba($lightGrey, .3);
         }
 
         .w-detail__mime-type {
@@ -88,11 +116,13 @@
         &-info {
             font-size: 13px;
             font-weight: 300;
+
             fill: rgba($white, .4);
 
             &.-percent {
-                font-size: 11px;
                 fill: rgba($daffodil, .4);
+
+                display: none;
             }
 
             &.-max {
@@ -133,6 +163,16 @@
                 fill: rgba($pastelOrange, 1);
             }
         }
+
+        &:hover {
+            .w-detail__timing-info {
+                display: none;
+
+                &.-percent {
+                    display: block;
+                }
+            }
+        }
     }
 
     &__total-time {
@@ -145,6 +185,7 @@
         &__text {
             font-size: 12px;
             font-weight: 300;
+
             fill: rgba($white, .4);
         }
     }
@@ -159,6 +200,16 @@
 
         &.-content-size {
             fill: rgba($pastelOrange, .7);
+        }
+    }
+
+    &.-open {
+        .w-detail__closed {
+            display: none;
+        }
+
+        .w-detail__cont {
+            display: block;
         }
     }
 }

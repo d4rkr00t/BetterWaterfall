@@ -8,11 +8,11 @@ requirejs.config({
 
 // Start the main app logic.
 requirejs(
-    ['app/legend', 'app/sample-data', 'app/detail-data', 'app/waterfall-graph', 'app/detail-graph'],
-    function (legend, waterfallData, detailData, waterfall, detail) {
-        legend.mainLegend();
-
-        waterfall.render(waterfallData, detail.render);
-        legend.timingsLegend();
-
+    ['app/legend', 'app/sample-data', 'app/waterfall-graph', 'app/detail-graph'],
+    function (legend, waterfallData, waterfall, detail) {
+        if (waterfallData) {
+            legend.mainLegend();
+            waterfall.render(waterfallData, detail);
+            document.querySelector('.w-no-data').classList.add('-hidden');
+        }
     });

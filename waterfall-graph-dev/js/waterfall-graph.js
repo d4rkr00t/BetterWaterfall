@@ -167,7 +167,7 @@ var getPageEndTime = function(onLoad, lastEntry, pageStartTime) {
     return Math.ceil(lastEntry.endTime - pageStartTime) + 200;
 };
 
-var paddings = { top: 100, bottom: 68, left: 18, right: 38 },
+var paddings = { top: 100, bottom: 68, left: 18 + 350, right: 38 },
 
     mainGraphCont,
     mainLegend,
@@ -178,14 +178,17 @@ var paddings = { top: 100, bottom: 68, left: 18, right: 38 },
     xScale,
     yScale,
 
-    callback,
+    detailView,
 
     pageStartTime,
     pageEndTime,
     entries,
     mainHost,
     onLoad,
-    onContentLoad;
+    onContentLoad
+
+    _prev = null,
+    _prevThis = null;
 
 /**
  *
@@ -194,6 +197,30 @@ var paddings = { top: 100, bottom: 68, left: 18, right: 38 },
  *
  *
  */
+
+var _cleanUp = function(el, d) {
+    d3.select(el.parentNode).classed('-hover', false);
+    d3.select(el.parentNode).classed('-click', false);
+
+    mainGraphCont.classed('-hover', false);
+    mainGraphCont.classed('-click', false);
+
+    mainLegend
+        .classed('-hover', false)
+        .classed('-click', false)
+        .classed('-' + d.type, false);
+
+    timingsLegend.classed('-hover', false);
+    timingsLegend.classed('-click', false);
+
+    for (var timing in d.timings) {
+        if ( d.timings.hasOwnProperty(timing) ) {
+            d.timings[timing] && timingsLegend.classed('-' + timing, false);
+        }
+    }
+
+    detailView.cleanUp();
+};
 
 var drawXAxis = (function() {
     var cont,
@@ -288,59 +315,49 @@ var drawEntries = (function() {
                             return 'w-graph__entry -' + d.type;
                         });
 
-        var _hover = function(el, d) {
+        var _hover = function(el, d, cls) {
+            d3.select(el.parentNode).classed(cls, true);
+            mainGraphCont.classed(cls, true);
+            mainLegend
+                .classed(cls, true)
+                .classed('-' + d.type, true);
 
+            timingsLegend.classed(cls, true);
+
+            for (var timing in d.timings) {
+                if ( d.timings.hasOwnProperty(timing) ) {
+                    d.timings[timing] && timingsLegend.classed('-' + timing, true);
+                }
+            }
         };
 
         var hoverGroup = group
-                            .append('g')
-                            .attr('class', 'w-graph__entry-hover-trigger')
-                            .on('click', function(d) {
-                                var _this = this;
-                                callback(d, function () {
-                                    d3.select(_this.parentNode).classed('-click', false);
-                                    mainGraphCont.classed('-click', false);
-                                    mainLegend
-                                        .classed('-click', false)
-                                        .classed('-' + d.type, false);
-                                });
+            .append('g')
+            .attr('class', 'w-graph__entry-hover-trigger')
+            .on('click', function(d) {
+                if (_prev !== d) {
+                    _prev && _cleanUp(_prevThis, _prev);
 
-                                d3.select(this.parentNode).classed('-click', true);
-                                mainGraphCont.classed('-click', true);
-                                mainLegend
-                                    .classed('-click', true)
-                                    .classed('-' + d.type, true);
-                            })
-                            .on('mouseover', function(d) {
-                                d3.select(this.parentNode).classed('-hover', true);
-                                mainGraphCont.classed('-hover', true);
-                                mainLegend
-                                    .classed('-hover', true)
-                                    .classed('-' + d.type, true);
+                    _prev = d;
+                    _prevThis = this;
 
-                                timingsLegend.classed('-hover', true);
+                    detailView.render(d);
 
-                                for (var timing in d.timings) {
-                                    if ( d.timings.hasOwnProperty(timing) ) {
-                                        d.timings[timing] && timingsLegend.classed('-' + timing, true);
-                                    }
-                                }
-                            })
-                            .on('mouseout', function(d) {
-                                d3.select(this.parentNode).classed('-hover', false);
-                                mainGraphCont.classed('-hover', false);
-                                mainLegend
-                                    .classed('-hover', false)
-                                    .classed('-' + d.type, false);
-
-                                timingsLegend.classed('-hover', false);
-
-                                for (var timing in d.timings) {
-                                    if ( d.timings.hasOwnProperty(timing) ) {
-                                        d.timings[timing] && timingsLegend.classed('-' + timing, false);
-                                    }
-                                }
-                            });
+                    _hover(this, d, '-click');
+                } else {
+                    _prev = null;
+                    _cleanUp(this, d);
+                }
+            })
+            .on('mouseover', function(d) {
+                if (mainLegend.classed('-click')) return;
+                _hover(this, d, '-hover');
+                // detailView.render(d, function () {});
+            })
+            .on('mouseout', function(d) {
+                if (mainLegend.classed('-click')) return;
+                _cleanUp(this, d);
+            });
 
         hoverGroup
             .append('rect')
@@ -527,8 +544,8 @@ var drawEntries = (function() {
 })();
 
 return {
-    render: function (data, cb) {
-        callback = cb;
+    render: function (data, dv) {
+        detailView = dv;
 
         pageStartTime = new Date(data.pages[0].startedDateTime).getTime();
         entries = prepEntriesData(data.entries, pageStartTime);

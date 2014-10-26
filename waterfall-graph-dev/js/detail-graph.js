@@ -1,12 +1,12 @@
 define(['vendor/d3/d3.min'], function(d3) {
     var mainGraphCont,
         svg,
-        paddings = { top: 0, right: 90, bottom: 0, left: 60 },
-        width = 450,
+        paddings = { top: 0, right: 80, bottom: 0, left: 60 },
+        width = 340,
         height = 0,
         xScale,
         yScale,
-        vStep = 51,
+        vStep = 31,
         timings = [],
         max = 0,
         detailCont = d3.select('.w-detail'),
@@ -112,7 +112,7 @@ define(['vendor/d3/d3.min'], function(d3) {
                 })
                 .text(function (d) { return d.ms; })
                 .attr('x', function (d) { return xScale(d.xPos + d.val) + 10; })
-                .attr('y', function (d, i) { return yScale(i) + 22; })
+                .attr('y', function (d, i) { return yScale(i) + 21; })
                 .attr('text-anchor', 'start');
 
             group
@@ -120,7 +120,7 @@ define(['vendor/d3/d3.min'], function(d3) {
                 .attr('class', 'w-detail__timing-info -percent')
                 .text(function (d) { return d.percent; })
                 .attr('x', function (d) { return xScale(d.xPos + d.val) + 10; })
-                .attr('y', function (d, i) { return yScale(i) + 38; })
+                .attr('y', function (d, i) { return yScale(i) + 21; })
                 .attr('text-anchor', 'start');
 
         };
@@ -179,21 +179,23 @@ define(['vendor/d3/d3.min'], function(d3) {
      */
     var open = function() {
         waterfallCont.classed('-blur', true);
-        detailCont.classed('-opened', true);
+        detailCont.classed('-open', true);
     };
 
     var close = function() {
         waterfallCont.classed('-blur', false);
-        detailCont.classed('-opened', false);
         callback && callback();
     };
 
     var cleanUp = function() {
         svg.selectAll('*').remove();
+        detailCont.classed('-open', false);
     };
 
     var resize = function(data) {
         height = (timings.length * vStep) - paddings.top - paddings.bottom;
+
+        mainGraphCont.attr('height', height + paddings.top + paddings.bottom + 50);
 
         xScale
             .domain([0, data.time])
@@ -218,6 +220,7 @@ define(['vendor/d3/d3.min'], function(d3) {
 
     return {
         render: function (data, cb) {
+            max = 0;
             timings = prepareTimings(data);
             callback = cb;
 
@@ -234,6 +237,7 @@ define(['vendor/d3/d3.min'], function(d3) {
             drawTimings(svg, data, timings);
             drawTotalTime(svg, data);
             drawSizes(svg, data);
-        }
+        },
+        cleanUp: cleanUp
     };
 });
