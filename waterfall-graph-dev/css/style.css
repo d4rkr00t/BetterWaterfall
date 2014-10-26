@@ -231,6 +231,7 @@ html, body {
   .w-detail__title {
     margin: 20px 0 0 0;
     padding: 0;
+    display: block;
     text-align: center;
     letter-spacing: 1px;
     color: rgba(255, 255, 255, 0.6);

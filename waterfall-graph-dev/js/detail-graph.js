@@ -207,7 +207,10 @@ define(['vendor/d3/d3.min'], function(d3) {
     };
 
     var setStaticData = function(data) {
-        title.text(data.name);
+        title
+            .text(data.name)
+            .attr('href', data.url);
+
         host.text(data.host);
         mimeType
             .text(data.mimeType)
