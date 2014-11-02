@@ -4,6 +4,10 @@ var gulp = require('gulp'),
 
     sass = require('gulp-sass'),
 
+    concat = require('gulp-concat'),
+
+    amdOptimize = require('amd-optimize'),
+
     browserSync = require('browser-sync'),
     reload = browserSync.reload;
 
@@ -12,8 +16,6 @@ var paths = {
     styles: ['waterfall-graph-dev/css/*.scss'],
     js: ['waterfall-graph-dev/js/*.js']
 };
-
-var buildDir = 'dist/';
 
 var errorHandler = function(err) {
     console.error(err);
@@ -52,3 +54,20 @@ gulp.task('watch', function () {
 });
 
 gulp.task('default', ['css', 'browser-sync', 'watch']);
+
+gulp.task('scripts', function () {
+
+  return gulp.src('waterfall-graph-dev/js/*.js')
+    // Traces all modules and outputs them in the correct order.
+    .pipe(amdOptimize('main', {
+      baseUrl: './',
+      paths: {
+          'vendor/d3/d3.min' : 'waterfall-graph-dev/vendor/d3/d3.min',
+          'app/utils' : 'waterfall-graph-dev/js/utils',
+          'app/legend' : 'waterfall-graph-dev/js/legend'
+      }
+    }))
+    .pipe(concat('app.js'))
+    .pipe(gulp.dest('js'));
+
+});

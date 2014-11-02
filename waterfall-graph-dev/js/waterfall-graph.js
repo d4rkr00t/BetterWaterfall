@@ -3,123 +3,46 @@
  * Waterfall graph
  *
  */
-define(['vendor/d3/d3.min'], function (d3) {
+define(['vendor/d3/d3.min', 'app/utils', 'app/legend'], function (d3, utils, legend) {
 
-var vStep = 3;
+var paddings = { top: 100, bottom: 68, left: 18 + 350, right: 38 },
+    vStep = 3,
 
-var formatSize = function(size) {
-    size = (size / 1024);
-    return size > 3 ? size : 3;
-};
+    mainGraphCont,
+    mainLegend,
+    timingsLegend,
+    svg,
+    width,
+    height,
+    xScale,
+    yScale,
 
-var getContentType = function(mimeType) {
+    detailView,
 
-    switch(mimeType) {
-        case 'text/html':
-            return 'document';
-        case 'text/css':
-            return 'stylesheet';
-        case 'application/x-javascript':
-            return 'script';
-        case 'text/javascript':
-            return 'script';
-        case 'application/javascript':
-            return 'script';
-        case 'image/png':
-            return 'image';
-        case 'image/gif':
-            return 'image';
-        case 'image/jpeg':
-            return 'image';
-        case 'application/octet-stream':
-            return 'fonts';
-        default:
-            return 'other';
-    }
-};
+    pageStartTime,
+    pageEndTime,
+    entries,
+    mainHost,
+    onLoad,
+    onContentLoad,
 
-var parseUrl = function(url) {
-    var isValid = false,
-        url = url,
-        scheme = '',
-        host = '',
-        port = '',
-        path = '',
-        queryParams = '',
-        fragment = '',
-        folderPathComponents = '',
-        lastPathComponent = '',
-        result;
+    state = {},
 
-    // RegExp groups:
-    // 1 - scheme
-    // 2 - hostname
-    // 3 - ?port
-    // 4 - ?path
-    // 5 - ?fragment
-    var match = url.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
-    if (match) {
-        isValid = true;
-        scheme = match[1].toLowerCase();
-        host = match[2];
-        port = match[3];
-        path = match[4] || '/';
-        fragment = match[5];
-    } else {
-        if (url.startsWith('data:')) {
-            scheme = 'data';
-            return;
-        }
-        if (url === 'about:blank') {
-            scheme = 'about';
-            return;
-        }
-        path = url;
-    }
-
-    if (path) {
-        // First cut the query params.
-        var path = path;
-        var indexOfQuery = path.indexOf('?');
-        if (indexOfQuery !== -1) {
-            queryParams = path.substring(indexOfQuery + 1)
-            path = path.substring(0, indexOfQuery);
-        }
-
-        // Then take last path component.
-        var lastSlashIndex = path.lastIndexOf('/');
-        if (lastSlashIndex !== -1) {
-            folderPathComponents = path.substring(0, lastSlashIndex);
-            lastPathComponent = path.substring(lastSlashIndex + 1);
-        } else {
-            lastPathComponent = path;
-        }
-    }
-
-    if (lastPathComponent) {
-        result = lastPathComponent;
-    } else {
-        if (url.indexOf('?') !== -1) {
-            result = '?' + queryParams;
-        } else {
-            result = host;
-        }
-    }
-
-    return {
-        name: result.length > 30 ? result.substr(0, 29) + '...' : result,
-        host: host
-    };
-};
+    _prev = null,
+    _prevThis = null;
 
 var prepEntriesData = function(entr, pageStartTime) {
     var totalSize = 0;
+
     return entr.map(function (item) {
         var startTime = new Date(item.startedDateTime).getTime(),
             yPos = totalSize,
-            parsedUrl = parseUrl(item.request.url);
+            parsedUrl = item.request.url.match(/^data/) ? {
+                    name: item.request.url.split('/')[0],
+                    host: 'data-uri'
+                } : utils.parseUrl(item.request.url);
 
-        totalSize += formatSize(item.response.content.size) + vStep;
+        totalSize += utils.formatSize(item.response.content.size) + vStep;
 
         return {
             time: item.time,
@@ -128,7 +51,7 @@ var prepEntriesData = function(entr, pageStartTime) {
             host: parsedUrl.host,
             url: item.request.url,
             mimeType: item.response.content.mimeType,
-            type: getContentType(item.response.content.mimeType),
+            type: utils.getContentType(item.response.content.mimeType),
             contentSize: item.response.content.size,
             respHeaderSize: item.response.headersSize,
             respBodySize: item.response.bodySize,
@@ -156,9 +79,9 @@ var getGraphHeight = function(entr, paddings) {
 
     return Math.ceil(entr.reduce(function (sum, item) {
         if (sum.toString() !== '[object Object]') {
-            return sum + formatSize(item.contentSize) + vStep;
+            return sum + utils.formatSize(item.contentSize) + vStep;
         }
-        return formatSize(sum.contentSize) + formatSize(item.contentSize) + vStep;
+        return utils.formatSize(sum.contentSize) + utils.formatSize(item.contentSize) + vStep;
     }));
 };
 
@@ -166,29 +89,6 @@ var getPageEndTime = function(onLoad, lastEntry, pageStartTime) {
     if (onLoad) return Math.ceil(onLoad) + 200;
     return Math.ceil(lastEntry.endTime - pageStartTime) + 200;
 };
-
-var paddings = { top: 100, bottom: 68, left: 18 + 350, right: 38 },
-
-    mainGraphCont,
-    mainLegend,
-    timingsLegend,
-    svg,
-    width,
-    height,
-    xScale,
-    yScale,
-
-    detailView,
-
-    pageStartTime,
-    pageEndTime,
-    entries,
-    mainHost,
-    onLoad,
-    onContentLoad
-
-    _prev = null,
-    _prevThis = null;
 
 /**
  *
@@ -229,10 +129,16 @@ var drawXAxis = (function() {
     return function (svg, width, height, paddings) {
         if (!svg.select('.w-graph__x-axis') || !cont) cont = svg.append('g').attr('class', 'w-graph__x-axis');
 
+        cont.selectAll('.w-graph__x-axis-tick').remove();
+
         var count = new Array(Math.floor((width / step))),
             groups = cont.selectAll('.w-graph__x-axis-tick')
-                            .data(count)
-                        .enter().append('g');
+                            .data(count);
+
+        groups.exit().remove();
+
+        var groupsEnter = groups.enter().append('g');
+
         groups
             .append('line')
             .attr('x1', function (d, i) { return i * step + 0.5; })
@@ -265,55 +171,83 @@ var drawDOMEvents = (function() {
     return function (svg, onLoad, onContentLoad, paddings) {
         if (!svg.select('.w-graph__dom-events') || !cont) cont = svg.append('g').attr('class', 'w-graph__dom-events');
 
-        cont
-            .append('line')
-            .attr('x1', xScale(onLoad))
-            .attr('x2', xScale(onLoad))
-            .attr('y1', 0 - paddings.top + 10)
-            .attr('y2', height + paddings.bottom)
-            .attr('class', 'w-graph__dom-event -onload');
+        if (!state.onLoadDrawn) {
+            if (onLoad) {
+                cont
+                    .append('line')
+                    .attr('x1', xScale(onLoad))
+                    .attr('x2', xScale(onLoad))
+                    .attr('y1', 0 - paddings.top + 10)
+                    .attr('y2', height + paddings.bottom)
+                    .attr('class', 'w-graph__dom-event -onload');
 
-        cont
-            .append('text')
-            .text('Load event (' + Math.floor(onLoad) + ' ms)')
-            .attr('x', xScale(onLoad) + 6)
-            .attr('y', 20 - paddings.top)
-            .attr('text-anchor', 'right')
-            .attr('class', 'w-graph__dom-text -onload');
+                cont
+                    .append('text')
+                    .text('Load event (' + Math.floor(onLoad) + ' ms)')
+                    .attr('x', xScale(onLoad) + 6)
+                    .attr('y', 20 - paddings.top)
+                    .attr('text-anchor', 'right')
+                    .attr('class', 'w-graph__dom-text -onload');
 
-        cont
-            .append('line')
-            .attr('x1', xScale(onContentLoad))
-            .attr('x2', xScale(onContentLoad))
-            .attr('y1', 0 - paddings.top + 10)
-            .attr('y2', height + paddings.bottom)
-            .attr('class', 'w-graph__dom-event -oncontentload');
+                state.onLoadDrawn = true;
+            }
+        } else {
+            cont.select('.w-graph__dom-event.-onload')
+                .transition()
+                .duration(200)
+                .attr('y2', height + paddings.bottom);
+        }
 
-        cont
-            .append('text')
-            .text('DOMContentLoaded event (' + Math.floor(onContentLoad) + ' ms)')
-            .attr('x', xScale(onContentLoad) + 6)
-            .attr('y', 20 - paddings.top)
-            .attr('text-anchor', 'right')
-            .attr('class', 'w-graph__dom-text -oncontentload');
+        if (!state.onContentLoadDrawn) {
+            if (onContentLoad) {
+                cont
+                    .append('line')
+                    .attr('x1', xScale(onContentLoad))
+                    .attr('x2', xScale(onContentLoad))
+                    .attr('y1', 0 - paddings.top + 10)
+                    .attr('y2', height + paddings.bottom)
+                    .attr('class', 'w-graph__dom-event -oncontentload');
+
+                cont
+                    .append('text')
+                    .text('DOMContentLoaded event (' + Math.floor(onContentLoad) + ' ms)')
+                    .attr('x', xScale(onContentLoad) + 6)
+                    .attr('y', 20 - paddings.top)
+                    .attr('text-anchor', 'right')
+                    .attr('class', 'w-graph__dom-text -oncontentload');
+
+                state.onContentLoadDrawn = true;
+            }
+        } else {
+            cont.select('.w-graph__dom-event.-oncontentload')
+                .transition()
+                .duration(200)
+                .attr('y2', height + paddings.bottom);
+        }
+
+
     };
 })();
 
 var drawEntries = (function() {
     var cont;
 
-    return function (svg, entries) {
+    return function (svg, data, entries) {
         if (!svg.select('.w-graph__entries') || !cont) cont = svg.append('g').attr('class', 'w-graph__entries');
 
         /**
          * Main Entry time
          */
         var group = cont.selectAll('.w-graph__entry')
-                        .data(entries)
-                    .enter().append('g')
-                        .attr('class', function (d) {
-                            return 'w-graph__entry -' + d.type;
+                        .data(entries, function (d) {
+                            return pageStartTime + d.url;
                         });
+
+        groupEnter = group
+            .enter().append('g')
+            .attr('class', function (d) {
+                return 'w-graph__entry -' + d.type;
+            });
 
         var _hover = function(el, d, cls) {
             d3.select(el.parentNode).classed(cls, true);
@@ -331,49 +265,51 @@ var drawEntries = (function() {
             }
         };
 
-        var hoverGroup = group
+        var hoverGroup = groupEnter
             .append('g')
-            .attr('class', 'w-graph__entry-hover-trigger')
-            .on('click', function(d) {
-                if (_prev !== d) {
-                    _prev && _cleanUp(_prevThis, _prev);
+                .attr('class', 'w-graph__entry-hover-trigger')
+                .on('click', function(d) {
+                    if (_prev !== d) {
+                        _prev && _cleanUp(_prevThis, _prev);
 
-                    _prev = d;
-                    _prevThis = this;
+                        _prev = d;
+                        _prevThis = this;
 
-                    detailView.render(d);
+                        detailView.render(d);
 
-                    _hover(this, d, '-click');
-                } else {
-                    _prev = null;
+                        _hover(this, d, '-click');
+                    } else {
+                        _prev = null;
+                        _cleanUp(this, d);
+                    }
+                })
+                .on('mouseover', function(d) {
+                    if (mainLegend.classed('-click')) return;
+                    _hover(this, d, '-hover');
+                })
+                .on('mouseout', function(d) {
+                    if (mainLegend.classed('-click')) return;
                     _cleanUp(this, d);
-                }
-            })
-            .on('mouseover', function(d) {
-                if (mainLegend.classed('-click')) return;
-                _hover(this, d, '-hover');
-                // detailView.render(d, function () {});
-            })
-            .on('mouseout', function(d) {
-                if (mainLegend.classed('-click')) return;
-                _cleanUp(this, d);
-            });
+                });
 
         hoverGroup
             .append('rect')
-            .attr('class', 'w-graph__entry-main')
-            .attr('x', function (d) {
-                return xScale(d.timings.startTimeRelated);
-            })
-            .attr('y', function (d) {
-                return yScale(d.yPos);
-            })
-            .attr('width', function (d) {
-                return d.time;
-            })
-            .attr('height', function (d) {
-                return formatSize(d.contentSize);
-            });
+                .attr('class', 'w-graph__entry-main')
+                .attr('x', function (d) {
+                    return xScale(d.timings.startTimeRelated);
+                })
+                .attr('y', function (d) {
+                    return yScale(d.yPos);
+                })
+                .attr('width', 0)
+                .attr('height', function (d) {
+                    return utils.formatSize(d.contentSize);
+                })
+                .transition()
+                .duration(1000)
+                .attr('width', function (d) {
+                    return d.time;
+                });
 
         /**
          * Timings parts
@@ -401,7 +337,7 @@ var drawEntries = (function() {
                     return d.timings[prop];
                 })
                 .attr('height', function (d) {
-                    return formatSize(d.contentSize);
+                    return utils.formatSize(d.contentSize);
                 });
         };
 
@@ -411,12 +347,12 @@ var drawEntries = (function() {
         drawTimingPart(subGroup, 'send', ['blocked', 'dns', 'connect']);
         drawTimingPart(subGroup, 'wait', ['blocked', 'dns', 'connect', 'send']);
         drawTimingPart(subGroup, 'receive', ['blocked', 'dns', 'connect', 'send', 'wait']);
-        drawTimingPart(subGroup, 'ssl', ['blocked', 'dns', 'connect', 'send', 'wait', 'receive']);
+        // drawTimingPart(subGroup, 'ssl', ['blocked', 'dns', 'connect', 'send', 'wait', 'receive']);
 
         /**
          * Entry Info
          */
-        var entryInfoGroup = group.append('g').attr('class', 'w-graph__entry-sub-info');
+        var entryInfoGroup = groupEnter.append('g').attr('class', 'w-graph__entry-sub-info');
 
         entryInfoGroup
             .append('line')
@@ -430,7 +366,7 @@ var drawEntries = (function() {
                 return yScale(d.yPos);
             })
             .attr('y2', function (d) {
-                return yScale(d.yPos + formatSize(d.contentSize));
+                return yScale(d.yPos + utils.formatSize(d.contentSize));
             })
             .attr('class', 'w-graph__entry-sub-info__line');
 
@@ -443,10 +379,10 @@ var drawEntries = (function() {
                 return xScale(d.timings.endTimeRelated) + 30;
             })
             .attr('y1', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 ));
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 ));
             })
             .attr('y2', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 ));
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 ));
             })
             .attr('class', 'w-graph__entry-sub-info__line');
 
@@ -459,10 +395,10 @@ var drawEntries = (function() {
                 return xScale(d.timings.endTimeRelated) + 30;
             })
             .attr('y1', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 )) - 53;
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) - 53;
             })
             .attr('y2', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 )) + 53;
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) + 53;
             })
             .attr('class', 'w-graph__entry-sub-info__line');
 
@@ -477,7 +413,7 @@ var drawEntries = (function() {
             })
             .attr('x', textX)
             .attr('y', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 )) - 43;
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) - 43;
             })
             .attr('class', 'w-graph__entry-sub-info__text -name');
 
@@ -488,7 +424,7 @@ var drawEntries = (function() {
             })
             .attr('x', textX)
             .attr('y', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 )) - 24;
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) - 24;
             })
             .attr('class', function (d) {
                 return 'w-graph__entry-sub-info__text -host ' + (d.host === mainHost ? '' : '-diff')
@@ -501,7 +437,7 @@ var drawEntries = (function() {
             })
             .attr('x', textX)
             .attr('y', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 )) - 5;
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) - 5;
             })
             .attr('class', function (d) {
                 return 'w-graph__entry-sub-info__text -' + d.type;
@@ -514,7 +450,7 @@ var drawEntries = (function() {
             })
             .attr('x', textX)
             .attr('y', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 )) + 14;
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) + 14;
             })
             .attr('class', 'w-graph__entry-sub-info__text');
 
@@ -525,7 +461,7 @@ var drawEntries = (function() {
             })
             .attr('x', textX)
             .attr('y', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 )) + 33;
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) + 33;
             })
             .attr('class', 'w-graph__entry-sub-info__text');
 
@@ -536,9 +472,26 @@ var drawEntries = (function() {
             })
             .attr('x', textX)
             .attr('y', function (d) {
-                return yScale(d.yPos + (formatSize(d.contentSize) / 2 )) + 52;
+                return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) + 52;
             })
             .attr('class', 'w-graph__entry-sub-info__text -total');
+
+        /**
+         * Transitions
+         */
+        group
+            .exit()
+                .select('.w-graph__entry-main')
+                    .transition()
+                    .duration(500)
+                    .attr('width', 0)
+                    .remove();
+
+        group
+            .exit()
+                .transition()
+                .duration(500)
+                .remove();
 
     };
 })();
@@ -547,42 +500,56 @@ return {
     render: function (data, dv) {
         detailView = dv;
 
-        pageStartTime = new Date(data.pages[0].startedDateTime).getTime();
-        entries = prepEntriesData(data.entries, pageStartTime);
-        onLoad = data.pages[0].pageTimings.onLoad;
-        onContentLoad = data.pages[0].pageTimings.onContentLoad;
-        pageEndTime = getPageEndTime(onLoad, entries[entries.length - 1], pageStartTime);
-        width = Math.ceil(pageEndTime);
-        height = getGraphHeight(entries);
-        mainHost = entries[0].host;
+        if (data.entries.length > 0 && data.pages.length > 0) {
 
-        !mainGraphCont && (mainGraphCont = d3.select('.w-graph'));
-        !mainLegend && (mainLegend = d3.select('.w-graph__main-legend'));
-        !timingsLegend && (timingsLegend = d3.select('.w-graph__timings-legend'));
+            document.querySelector('.w-no-data').classList.add('-hidden');
 
-        /**
-         * Define graph sizes
-         */
-        !svg && (svg = mainGraphCont
-                    .attr('width', width + paddings.left + paddings.right)
-                    .attr('height', height + paddings.top + paddings.bottom)
-                .append('g')
-                    .attr('transform', 'translate(' + paddings.left + ',' + paddings.top + ')'));
+            pageStartTime = new Date(data.pages[0].startedDateTime).getTime();
+            entries = prepEntriesData(data.entries, pageStartTime);
+            onLoad = data.pages[0].pageTimings.onLoad;
+            onContentLoad = data.pages[0].pageTimings.onContentLoad;
+            pageEndTime = getPageEndTime(onLoad, entries[entries.length - 1], pageStartTime);
+            width = Math.ceil(pageEndTime);
+            height = getGraphHeight(entries);
+            mainHost = entries[0].host;
 
-        /**
-         * Create graph scales
-         */
-        xScale = d3.scale.linear()
-                    .domain([0, width])
-                    .range([0, width]);
+            !mainGraphCont && (mainGraphCont = d3.select('.w-graph'));
+            !mainLegend && (mainLegend = d3.select('.w-graph__main-legend'));
+            !timingsLegend && (timingsLegend = d3.select('.w-graph__timings-legend'));
 
-        yScale = d3.scale.linear()
-                    .domain([0, height])
-                    .range([0, height]);
+            /**
+             * Define graph sizes
+             */
 
-        drawXAxis(svg, width, height, paddings);
-        drawDOMEvents(svg, onLoad, onContentLoad, paddings);
-        drawEntries(svg, entries);
+            if (!svg) {
+                svg = mainGraphCont
+                            .attr('width', width + paddings.left + paddings.right)
+                            .attr('height', height + paddings.top + paddings.bottom)
+                        .append('g')
+                            .attr('transform', 'translate(' + paddings.left + ',' + paddings.top + ')');
+            } else {
+                svg = mainGraphCont
+                            .attr('width', width + paddings.left + paddings.right)
+                            .attr('height', height + paddings.top + paddings.bottom);
+            }
+
+            /**
+             * Create graph scales
+             */
+            xScale = d3.scale.linear()
+                        .domain([0, width])
+                        .range([0, width]);
+
+            yScale = d3.scale.linear()
+                        .domain([0, height])
+                        .range([0, height]);
+
+            drawXAxis(svg, width, height, paddings);
+            drawDOMEvents(svg, onLoad, onContentLoad, paddings);
+            drawEntries(svg, data, entries);
+
+            legend.mainLegend();
+        }
     }
 };
 

@@ -1,7 +1,7 @@
 define(['vendor/d3/d3.min'], function(d3) {
     var mainGraphCont,
         svg,
-        paddings = { top: 0, right: 80, bottom: 0, left: 60 },
+        paddings = { top: 0, right: 120, bottom: 0, left: 60 },
         width = 340,
         height = 0,
         xScale,
@@ -72,56 +72,73 @@ define(['vendor/d3/d3.min'], function(d3) {
     var drawTimings = (function() {
         var cont;
 
-        return function (svg, data, timings) {
+        return function (svg, timings) {
             if (!!svg.select('.w-detail__timings')[0]) cont = svg.append('g').attr('class', 'w-detail__timings');
 
             /**
              * Timings Group
              */
             var group = cont.selectAll('.w-detail__timing')
-                            .data(timings)
-                        .enter().append('g')
-                            .attr('class', function (d) {
-                                return 'w-detail__timing -' + d.title;
-                            });
+                            .data(timings);
 
             group
+                .exit()
+                    .select('.w-detail__timing-entry')
+                        .transition()
+                        .duration(300)
+                        .attr('width', 0);
+
+            group
+                .exit()
+                    .transition()
+                    .duration(300)
+                    .remove();
+
+            groupEnter = group.enter().append('g')
+                .attr('class', function (d) {
+                    return 'w-detail__timing -' + d.title;
+                });
+
+            groupEnter
                 .append('rect')
-                .attr('class', function (d) {
-                    return 'w-detail__timing-entry -' + d.title;
-                })
-                .attr('x', function (d) { return xScale(d.xPos); })
-                .attr('y', function (d, i) { return yScale(i); })
-                .attr('width', function (d) { return xScale(d.val); })
-                .attr('height', function () { return vStep; });
+                    .attr('class', function (d) {
+                        return 'w-detail__timing-entry -' + d.title;
+                    })
+                    .attr('x', function (d) { return xScale(d.xPos); })
+                    .attr('y', function (d, i) { return yScale(i); })
+                    .attr('width', 0)
+                    .attr('height', function () { return vStep; })
+                    .transition()
+                    .duration(400)
+                    .attr('width', function (d) { return xScale(d.val); });
 
-            group
+            groupEnter
                 .append('text')
-                .attr('class', function (d) {
-                    return 'w-detail__timing-title -' + d.title;
-                })
-                .text(function (d) { return d.title })
-                .attr('x', function (d) { return xScale(d.xPos) - 10; })
-                .attr('y', function (d, i) { return yScale(i) + ( vStep / 2 ) + 5; })
-                .attr('text-anchor', 'end');
+                    .attr('class', function (d) {
+                        return 'w-detail__timing-title -' + d.title;
+                    })
+                    .text(function (d) { return d.title })
+                    .attr('x', function (d) { return xScale(d.xPos) - 10; })
+                    .attr('y', function (d, i) { return yScale(i) + ( vStep / 2 ) + 5; })
+                    .attr('text-anchor', 'end');
 
-            group
+            groupEnter
                 .append('text')
-                .attr('class', function (d) {
-                    return 'w-detail__timing-info' + (d.val === max ? ' -max' : '');
-                })
-                .text(function (d) { return d.ms; })
-                .attr('x', function (d) { return xScale(d.xPos + d.val) + 10; })
-                .attr('y', function (d, i) { return yScale(i) + 21; })
-                .attr('text-anchor', 'start');
+                    .attr('class', function (d) {
+                        return 'w-detail__timing-info' + (d.val === max ? ' -max' : '');
+                    })
+                    .text(function (d) { return d.ms; })
+                    .attr('x', function (d) { return xScale(d.xPos + d.val) + 10; })
+                    .attr('y', function (d, i) { return yScale(i) + 21; })
+                    .attr('text-anchor', 'start');
 
-            group
+            groupEnter
                 .append('text')
-                .attr('class', 'w-detail__timing-info -percent')
-                .text(function (d) { return d.percent; })
-                .attr('x', function (d) { return xScale(d.xPos + d.val) + 10; })
-                .attr('y', function (d, i) { return yScale(i) + 21; })
-                .attr('text-anchor', 'start');
+                    .attr('class', 'w-detail__timing-info -percent')
+                    .text(function (d) { return d.percent; })
+                    .attr('x', function (d) { return xScale(d.xPos + d.val) + 10; })
+                    .attr('y', function (d, i) { return yScale(i) + 21; })
+                    .attr('text-anchor', 'start');
 
         };
     })();
@@ -237,7 +254,7 @@ define(['vendor/d3/d3.min'], function(d3) {
             setStaticData(data);
             open();
 
-            drawTimings(svg, data, timings);
+            drawTimings(svg, timings);
             drawTotalTime(svg, data);
             drawSizes(svg, data);
         },

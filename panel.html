@@ -2,11 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Waterfall</title>
+    <title>Waterfall — Graph</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="results"></div>
+    <div class="w-no-data">
+        No Data try to refresh browser window.
+    </div>
+    <div class="w-detail">
+        <div class="w-detail__closed">Click on element to show detail view</div>
+        <div class="w-detail__cont">
+            <a href="#" class="w-detail__title">b-top-panel__e-logo.png</a>
+            <div class="w-detail__info">
+                <span class="w-detail__host">sysoev.org</span>
+                /
+                <span class="w-detail__mime-type -image">image/png</span>
+            </div>
+            <svg class="w-detail-graph"></svg>
+        </div>
+    </div>
+    <div class="w-graph__cont">
+        <ul class="w-graph__main-legend w-graph-legend -relative">
+            <li class="-document">
+                <span class="w-graph-legend-color" style="background: rgba(65, 182, 196, .9);"></span> document
+            </li>
+            <li class="-image">
+                <span class="w-graph-legend-color" style="background: rgba(150, 36, 145, .9);"></span> image
+            </li>
+            <li class="-stylesheet">
+                <span class="w-graph-legend-color" style="background: rgba(127, 188, 65, .9);"></span> stylesheet
+            </li>
+            <li class="-script">
+                <span class="w-graph-legend-color" style="background: rgba(254, 178, 76, .9);"></span> script
+            </li>
+            <li class="-fonts">
+                <span class="w-graph-legend-color" style="background: rgba(227, 26, 28, .85);"></span> fonts
+            </li>
+            <li class="-other">
+                <span class="w-graph-legend-color" style="background: rgba(247, 252, 253, .7);"></span> other
+            </li>
+        </ul>
+
+        <svg class="w-graph"></svg>
+
+    </div><!-- /.w-graph__cont -->
+
+    <script src="waterfall-graph-dev/vendor/requirejs/require.js"></script>
+
     <script src="js/d.min.js"></script>
+    <script src="js/app.js"></script>
     <script src="js/waterfall.js"></script>
 </body>
 </html>
