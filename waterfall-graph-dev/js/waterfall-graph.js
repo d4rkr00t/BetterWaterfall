@@ -76,7 +76,6 @@ var prepEntriesData = function(entr, pageStartTime) {
 };
 
 var getGraphHeight = function(entr, paddings) {
-
     return Math.ceil(entr.reduce(function (sum, item) {
         if (sum.toString() !== '[object Object]') {
             return sum + utils.formatSize(item.contentSize) + vStep;
@@ -85,9 +84,17 @@ var getGraphHeight = function(entr, paddings) {
     }));
 };
 
-var getPageEndTime = function(onLoad, lastEntry, pageStartTime) {
-    if (onLoad) return Math.ceil(onLoad) + 200;
-    return Math.ceil(lastEntry.endTime - pageStartTime) + 200;
+var getPageEndTime = function(onLoad, entries, pageStartTime) {
+
+    var lastEntry;
+
+    for (var i = 0; i < entries.length; i++) {
+        if (!lastEntry || entries[i].timings.endTime > lastEntry.timings.endTime) {
+            lastEntry = entries[i];
+        }
+    }
+
+    return Math.ceil(lastEntry.timings.endTime - pageStartTime) + 200;
 };
 
 /**
@@ -169,7 +176,7 @@ var drawDOMEvents = (function() {
     var cont;
 
     return function (svg, onLoad, onContentLoad, paddings) {
-        if (!svg.select('.w-graph__dom-events') || !cont) cont = svg.append('g').attr('class', 'w-graph__dom-events');
+        if (!svg.select('.w-graph__dom-events')[0][0]) cont = svg.append('g').attr('class', 'w-graph__dom-events');
 
         if (!state.onLoadDrawn) {
             if (onLoad) {
@@ -233,14 +240,14 @@ var drawEntries = (function() {
     var cont;
 
     return function (svg, data, entries) {
-        if (!svg.select('.w-graph__entries') || !cont) cont = svg.append('g').attr('class', 'w-graph__entries');
+        if (!svg.select('.w-graph__entries')[0][0]) cont = svg.append('g').attr('class', 'w-graph__entries');
 
         /**
          * Main Entry time
          */
         var group = cont.selectAll('.w-graph__entry')
                         .data(entries, function (d) {
-                            return pageStartTime + d.url;
+                            return d.url + d.time + d.name + d.size;
                         });
 
         groupEnter = group
@@ -301,12 +308,9 @@ var drawEntries = (function() {
                 .attr('y', function (d) {
                     return yScale(d.yPos);
                 })
-                .attr('width', 0)
                 .attr('height', function (d) {
                     return utils.formatSize(d.contentSize);
                 })
-                .transition()
-                .duration(1000)
                 .attr('width', function (d) {
                     return d.time;
                 });
@@ -475,26 +479,39 @@ var drawEntries = (function() {
                 return yScale(d.yPos + (utils.formatSize(d.contentSize) / 2 )) + 52;
             })
             .attr('class', 'w-graph__entry-sub-info__text -total');
-
-        /**
-         * Transitions
-         */
-        group
-            .exit()
-                .select('.w-graph__entry-main')
-                    .transition()
-                    .duration(500)
-                    .attr('width', 0)
-                    .remove();
-
-        group
-            .exit()
-                .transition()
-                .duration(500)
-                .remove();
-
     };
 })();
+
+var drawTotalResources = (function() {
+    var cont;
+
+    return function (svg, data) {
+        if (!svg.select('.w-graph__total')[0][0]) cont = svg.append('g').attr('class', 'w-graph__total');
+
+        cont.selectAll('*').remove();
+
+        cont
+            .append('text')
+                .text(function (d) {
+                    return 'Total Resources: ' + data.entries.length
+                })
+                .attr('x', 0)
+                .attr('y', 30 - paddings.top);
+    };
+})();
+
+var _clean = function(data) {
+    _prevThis && _prev && _cleanUp(_prevThis, _prev);
+    _currentPageUrl = data.pages[0].title;
+    onLoad = null;
+    onContentLoad = null;
+    state = {};
+    svg.select('.w-graph__entries').remove();
+    svg.select('.w-graph__dom-events').remove();
+    entries = [];
+};
+
+var _currentPageUrl;
 
 return {
     render: function (data, dv) {
@@ -502,14 +519,16 @@ return {
 
         if (data.entries.length > 0 && data.pages.length > 0) {
 
+            mainGraphCont && _clean(data);
+
             document.querySelector('.w-no-data').classList.add('-hidden');
 
             pageStartTime = new Date(data.pages[0].startedDateTime).getTime();
             entries = prepEntriesData(data.entries, pageStartTime);
             onLoad = data.pages[0].pageTimings.onLoad;
             onContentLoad = data.pages[0].pageTimings.onContentLoad;
-            pageEndTime = getPageEndTime(onLoad, entries[entries.length - 1], pageStartTime);
-            width = Math.ceil(pageEndTime);
+            pageEndTime = getPageEndTime(onLoad, entries, pageStartTime);
+            width = Math.ceil(pageEndTime) || 400;
             height = getGraphHeight(entries);
             mainHost = entries[0].host;
 
@@ -528,9 +547,9 @@ return {
                         .append('g')
                             .attr('transform', 'translate(' + paddings.left + ',' + paddings.top + ')');
             } else {
-                svg = mainGraphCont
-                            .attr('width', width + paddings.left + paddings.right)
-                            .attr('height', height + paddings.top + paddings.bottom);
+                mainGraphCont
+                    .attr('width', width + paddings.left + paddings.right)
+                    .attr('height', height + paddings.top + paddings.bottom);
             }
 
             /**
@@ -547,6 +566,7 @@ return {
             drawXAxis(svg, width, height, paddings);
             drawDOMEvents(svg, onLoad, onContentLoad, paddings);
             drawEntries(svg, data, entries);
+            drawTotalResources(svg, data);
 
             legend.mainLegend();
         }

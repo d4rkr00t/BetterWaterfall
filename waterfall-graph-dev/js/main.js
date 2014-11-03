@@ -19,7 +19,7 @@ define('main', ['waterfall-graph', 'detail-graph'],
 
         chrome.devtools.network.onRequestFinished.addListener(debounce(function(req) {
             getHAR().then(processData);
-        }, 300));
+        }, 500));
 
         getHAR().then(processData);
     });
