@@ -1,2 +1,5 @@
 waterfall-graph-dev/vendor
+waterfall-graph-dev/css/style.css
 node_modules
+chrome-ext/style.css
+chrome-ext/js/app.js

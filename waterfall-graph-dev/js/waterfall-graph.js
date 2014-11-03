@@ -349,18 +349,10 @@ var drawEntries = (function() {
         subGroup
             .append('rect')
                 .attr('class', 'w-graph__entry-sub')
-                .attr('x', function (d) {
-                    return xScale(d.timings.startTimeRelated);
-                })
-                .attr('y', function (d) {
-                    return yScale(d.yPos);
-                })
-                .attr('height', function (d) {
-                    return utils.formatSize(d.contentSize);
-                })
-                .attr('width', function (d) {
-                    return d.time || 2;
-                })
+                .attr('x', function (d) { return xScale(d.timings.startTimeRelated); })
+                .attr('y', function (d) { return yScale(d.yPos); })
+                .attr('height', function (d) { return utils.formatSize(d.contentSize); })
+                .attr('width', function (d) { return d.time || 2; })
                 .attr('fill', 'rgba(255,255,255,.1)');
 
         drawTimingPart(subGroup, 'blocked');
