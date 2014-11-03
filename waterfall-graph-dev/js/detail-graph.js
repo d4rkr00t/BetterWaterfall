@@ -264,9 +264,11 @@ define(['vendor/d3/d3.min'], function(d3) {
             setStaticData(data);
             open();
 
-            drawTimings(svg, timings);
-            drawTotalTime(svg, data);
-            drawSizes(svg, data);
+            if (data.time > 0) {
+                drawTimings(svg, timings);
+                drawTotalTime(svg, data);
+                drawSizes(svg, data);
+            }
         },
         cleanUp: cleanUp
     };
