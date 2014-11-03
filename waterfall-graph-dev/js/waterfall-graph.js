@@ -142,7 +142,8 @@ var drawXAxis = (function() {
             groups = cont.selectAll('.w-graph__x-axis-tick')
                             .data(count);
 
-        groups.exit().remove();
+        cont.selectAll('.w-graph__x-axis-tick').remove();
+        cont.selectAll('.w-graph__x-axis-text').remove();
 
         var groupsEnter = groups.enter().append('g');
 

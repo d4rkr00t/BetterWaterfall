@@ -7644,7 +7644,8 @@ define('waterfall-graph', [
                 cont = svg.append('g').attr('class', 'w-graph__x-axis');
             cont.selectAll('.w-graph__x-axis-tick').remove();
             var count = new Array(Math.floor(width / step)), groups = cont.selectAll('.w-graph__x-axis-tick').data(count);
-            groups.exit().remove();
+            cont.selectAll('.w-graph__x-axis-tick').remove();
+            cont.selectAll('.w-graph__x-axis-text').remove();
             var groupsEnter = groups.enter().append('g');
             groups.append('line').attr('x1', function (d, i) {
                 return i * step + 0.5;
