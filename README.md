@@ -2,8 +2,7 @@
 
 My version of native network tab in chrome devtools.
 
-It shows sizes of resources like height of bar.
-And you can see detail view of each resources and figure out where are you spend page load time.
+It shows sizes of resources by height of bar. And you can see detail view of each resources and figure out where are you spend page load time.
 
 ## Installation
 
