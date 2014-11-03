@@ -127,11 +127,11 @@ define({
     "timings": {
       "blocked": 5.01200000144308,
       "dns": -1,
-      "connect": -1,
+      "connect": 300,
       "send": 0.12900000001537038,
-      "wait": 885.0319999983185,
+      "wait": 585.0319999983185,
       "receive": 3.246981003030669,
-      "ssl": -1
+      "ssl": 180
     },
     "connection": "82699",
     "pageref": "page_1"

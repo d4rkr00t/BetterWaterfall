@@ -7483,6 +7483,8 @@ define('app/utils', [], function () {
                 return 'image';
             case 'image/jpeg':
                 return 'image';
+            case 'application/x-font-woff':
+                return 'fonts';
             case 'application/octet-stream':
                 return 'fonts';
             default:
@@ -7695,7 +7697,7 @@ define('waterfall-graph', [
             if (!svg.select('.w-graph__entries')[0][0])
                 cont = svg.append('g').attr('class', 'w-graph__entries');
             var group = cont.selectAll('.w-graph__entry').data(entries, function (d) {
-                return d.url + d.time + d.name + d.size;
+                return d.url + pageStartTime + data.pages[0].title + data.pages[0].id;
             });
             groupEnter = group.enter().append('g').attr('class', function (d) {
                 return 'w-graph__entry -' + d.type;
@@ -7738,7 +7740,7 @@ define('waterfall-graph', [
             }).attr('height', function (d) {
                 return utils.formatSize(d.contentSize);
             }).attr('width', function (d) {
-                return d.time;
+                return d.time || 2;
             });
             var subGroup = hoverGroup.append('g').attr('class', 'w-graph__entry-sub');
             var drawTimingPart = function (grp, prop, timingPropsToAdd) {
@@ -7760,6 +7762,15 @@ define('waterfall-graph', [
                     return utils.formatSize(d.contentSize);
                 });
             };
+            subGroup.append('rect').attr('class', 'w-graph__entry-sub').attr('x', function (d) {
+                return xScale(d.timings.startTimeRelated);
+            }).attr('y', function (d) {
+                return yScale(d.yPos);
+            }).attr('height', function (d) {
+                return utils.formatSize(d.contentSize);
+            }).attr('width', function (d) {
+                return d.time || 2;
+            }).attr('fill', 'rgba(255,255,255,.1)');
             drawTimingPart(subGroup, 'blocked');
             drawTimingPart(subGroup, 'dns', ['blocked']);
             drawTimingPart(subGroup, 'connect', [
@@ -7862,22 +7873,19 @@ define('waterfall-graph', [
             }).attr('x', 0).attr('y', 30 - paddings.top);
         };
     }();
-    var _clean = function (data) {
+    var _clean = function () {
         _prevThis && _prev && _cleanUp(_prevThis, _prev);
-        _currentPageUrl = data.pages[0].title;
         onLoad = null;
         onContentLoad = null;
         state = {};
         svg.select('.w-graph__entries').remove();
         svg.select('.w-graph__dom-events').remove();
-        entries = [];
     };
-    var _currentPageUrl;
     return {
         render: function (data, dv) {
             detailView = dv;
             if (data.entries.length > 0 && data.pages.length > 0) {
-                mainGraphCont && _clean(data);
+                mainGraphCont && _clean();
                 document.querySelector('.w-no-data').classList.add('-hidden');
                 pageStartTime = new Date(data.pages[0].startedDateTime).getTime();
                 entries = prepEntriesData(data.entries, pageStartTime);
@@ -7885,7 +7893,7 @@ define('waterfall-graph', [
                 onContentLoad = data.pages[0].pageTimings.onContentLoad;
                 pageEndTime = getPageEndTime(onLoad, entries, pageStartTime);
                 width = Math.ceil(pageEndTime) || 400;
-                height = getGraphHeight(entries);
+                height = getGraphHeight(entries) || 400;
                 mainHost = entries[0].host;
                 !mainGraphCont && (mainGraphCont = d3.select('.w-graph'));
                 !mainLegend && (mainLegend = d3.select('.w-graph__main-legend'));
@@ -7931,22 +7939,32 @@ define('detail-graph', ['vendor/d3/d3.min'], function (d3) {
                 'blocked',
                 'dns',
                 'connect',
+                'ssl',
                 'send',
                 'wait',
-                'receive',
-                'ssl'
+                'receive'
             ], result = [], totalTime = 0;
         for (var i = 0; i < propList.length; i++) {
             if (data.timings[propList[i]]) {
                 data.timings[propList[i]] > max && (max = data.timings[propList[i]]);
-                result.push({
-                    title: propList[i],
-                    val: data.timings[propList[i]],
-                    xPos: totalTime,
-                    ms: Math.ceil(data.timings[propList[i]] * 100) / 100 + ' ms',
-                    percent: Math.ceil(data.timings[propList[i]] * 100 / data.time * 100) / 100 + '%'
-                });
-                totalTime += data.timings[propList[i]];
+                if (propList[i] === 'ssl') {
+                    result.push({
+                        title: propList[i],
+                        val: data.timings[propList[i]],
+                        xPos: totalTime - data.timings[propList[i]],
+                        ms: Math.ceil(data.timings[propList[i]] * 100) / 100 + ' ms',
+                        percent: Math.ceil(data.timings[propList[i]] * 100 / data.time * 100) / 100 + '%'
+                    });
+                } else {
+                    result.push({
+                        title: propList[i],
+                        val: data.timings[propList[i]],
+                        xPos: totalTime,
+                        ms: Math.ceil(data.timings[propList[i]] * 100) / 100 + ' ms',
+                        percent: Math.ceil(data.timings[propList[i]] * 100 / data.time * 100) / 100 + '%'
+                    });
+                    totalTime += data.timings[propList[i]];
+                }
             }
         }
         return result;
@@ -8121,6 +8139,6 @@ define('main', [
     };
     chrome.devtools.network.onRequestFinished.addListener(debounce(function (req) {
         getHAR().then(processData);
-    }, 500));
+    }, 300));
     getHAR().then(processData);
 });

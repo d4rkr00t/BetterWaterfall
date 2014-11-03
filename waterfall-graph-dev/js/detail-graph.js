@@ -17,7 +17,7 @@ define(['vendor/d3/d3.min'], function(d3) {
         callback = false;
 
     var prepareTimings = function(data) {
-        var propList = ['blocked', 'dns', 'connect', 'send', 'wait', 'receive', 'ssl'],
+        var propList = ['blocked', 'dns', 'connect', 'ssl', 'send', 'wait', 'receive'],
             result = [],
             totalTime = 0;
 
@@ -25,15 +25,25 @@ define(['vendor/d3/d3.min'], function(d3) {
             if (data.timings[propList[i]]) {
 
                 data.timings[propList[i]] > max && (max = data.timings[propList[i]]);
+                if (propList[i] === 'ssl') {
+                    result.push({
+                        title: propList[i],
+                        val: data.timings[propList[i]],
+                        xPos: totalTime - data.timings[propList[i]],
+                        ms: (Math.ceil(data.timings[propList[i]] * 100) / 100) + ' ms',
+                        percent: (Math.ceil(((data.timings[propList[i]] * 100) / data.time) * 100) / 100) + '%'
+                    });
+                } else {
+                    result.push({
+                        title: propList[i],
+                        val: data.timings[propList[i]],
+                        xPos: totalTime,
+                        ms: (Math.ceil(data.timings[propList[i]] * 100) / 100) + ' ms',
+                        percent: (Math.ceil(((data.timings[propList[i]] * 100) / data.time) * 100) / 100) + '%'
+                    });
 
-                result.push({
-                    title: propList[i],
-                    val: data.timings[propList[i]],
-                    xPos: totalTime,
-                    ms: (Math.ceil(data.timings[propList[i]] * 100) / 100) + ' ms',
-                    percent: (Math.ceil(((data.timings[propList[i]] * 100) / data.time) * 100) / 100) + '%'
-                });
-                totalTime += data.timings[propList[i]];
+                    totalTime += data.timings[propList[i]];
+                }
             }
 
         }

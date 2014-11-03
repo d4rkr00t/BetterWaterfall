@@ -23,6 +23,8 @@ define(function () {
                     return 'image';
                 case 'image/jpeg':
                     return 'image';
+                case 'application/x-font-woff':
+                    return 'fonts';
                 case 'application/octet-stream':
                     return 'fonts';
                 default:

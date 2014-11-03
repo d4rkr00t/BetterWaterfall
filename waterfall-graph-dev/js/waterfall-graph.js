@@ -247,7 +247,7 @@ var drawEntries = (function() {
          */
         var group = cont.selectAll('.w-graph__entry')
                         .data(entries, function (d) {
-                            return d.url + d.time + d.name + d.size;
+                            return d.url + pageStartTime + data.pages[0].title + data.pages[0].id;
                         });
 
         groupEnter = group
@@ -312,7 +312,7 @@ var drawEntries = (function() {
                     return utils.formatSize(d.contentSize);
                 })
                 .attr('width', function (d) {
-                    return d.time;
+                    return d.time || 2;
                 });
 
         /**
@@ -345,13 +345,29 @@ var drawEntries = (function() {
                 });
         };
 
+        subGroup
+            .append('rect')
+                .attr('class', 'w-graph__entry-sub')
+                .attr('x', function (d) {
+                    return xScale(d.timings.startTimeRelated);
+                })
+                .attr('y', function (d) {
+                    return yScale(d.yPos);
+                })
+                .attr('height', function (d) {
+                    return utils.formatSize(d.contentSize);
+                })
+                .attr('width', function (d) {
+                    return d.time || 2;
+                })
+                .attr('fill', 'rgba(255,255,255,.1)');
+
         drawTimingPart(subGroup, 'blocked');
         drawTimingPart(subGroup, 'dns', ['blocked']);
         drawTimingPart(subGroup, 'connect', ['blocked', 'dns']);
         drawTimingPart(subGroup, 'send', ['blocked', 'dns', 'connect']);
         drawTimingPart(subGroup, 'wait', ['blocked', 'dns', 'connect', 'send']);
         drawTimingPart(subGroup, 'receive', ['blocked', 'dns', 'connect', 'send', 'wait']);
-        // drawTimingPart(subGroup, 'ssl', ['blocked', 'dns', 'connect', 'send', 'wait', 'receive']);
 
         /**
          * Entry Info
@@ -500,18 +516,14 @@ var drawTotalResources = (function() {
     };
 })();
 
-var _clean = function(data) {
+var _clean = function() {
     _prevThis && _prev && _cleanUp(_prevThis, _prev);
-    _currentPageUrl = data.pages[0].title;
     onLoad = null;
     onContentLoad = null;
     state = {};
     svg.select('.w-graph__entries').remove();
     svg.select('.w-graph__dom-events').remove();
-    entries = [];
 };
-
-var _currentPageUrl;
 
 return {
     render: function (data, dv) {
@@ -519,7 +531,7 @@ return {
 
         if (data.entries.length > 0 && data.pages.length > 0) {
 
-            mainGraphCont && _clean(data);
+            mainGraphCont && _clean();
 
             document.querySelector('.w-no-data').classList.add('-hidden');
 
@@ -529,7 +541,7 @@ return {
             onContentLoad = data.pages[0].pageTimings.onContentLoad;
             pageEndTime = getPageEndTime(onLoad, entries, pageStartTime);
             width = Math.ceil(pageEndTime) || 400;
-            height = getGraphHeight(entries);
+            height = getGraphHeight(entries) || 400;
             mainHost = entries[0].host;
 
             !mainGraphCont && (mainGraphCont = d3.select('.w-graph'));
