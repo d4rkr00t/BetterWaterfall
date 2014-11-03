@@ -16,7 +16,7 @@ gulp build
 
 And install it as a unpacked extension.
 
-Or download a **better-waterfall.crx** and install it manualy.
+Or download a [**better-waterfall.crx**](https://github.com/d4rkr00t/BetterWaterfall/blob/master/better-waterfall.crx) and install it manualy.
 
 ## Screenshots
 
