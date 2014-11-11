@@ -76,7 +76,7 @@ gulp.task('build-js', function () {
 });
 
 gulp.task('build-css', function() {
-  gulp.src('waterfall-graph-dev/css/style.css')
+  gulp.src('waterfall-graph-dev/css/style.scss')
     .pipe(sass())
     .on('error', errorHandler)
     .pipe(gulp.dest('waterfall-graph-dev/css'))
